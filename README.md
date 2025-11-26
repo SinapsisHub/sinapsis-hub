@@ -1,4 +1,3 @@
-[![PyPI Downloads](https://static.pepy.tech/personalized-badge/sinapsis?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=GREEN&left_text=downloads)](https://pepy.tech/projects/sinapsis)
 
 <h1 align="center">
 <br>
