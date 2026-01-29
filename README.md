@@ -1,4 +1,3 @@
-
 <h1 align="center">
 <br>
 <a href="https://sinapsis.tech/">
@@ -200,7 +199,7 @@ you need to make sure the sinapsis base images are built in your system. To buil
  ```bash
 git clone git@github.com:Sinapsis-ai/sinapsis.git
 cd sinapsis
-```  
+```
 
 2. **Build the image**
 ```bash
@@ -328,4 +327,12 @@ including computer vision, time series, nlp, llm'. These packages include:
 This project is licensed under the AGPLv3 license, which encourages open collaboration and sharing. For more details, please refer to the [LICENSE](LICENSE) file.
 
 For commercial use, please refer to our [official Sinapsis website](https://sinapsis.tech) for information on obtaining a commercial license.
+
+<h2 id="license">🔍 License</h2>
+
+This project is licensed under the AGPLv3 license, which encourages open collaboration and sharing. For more details, please refer to the [LICENSE](LICENSE) file.
+
+For commercial use, please refer to our [official Sinapsis website](https://sinapsis.tech) for information on obtaining a commercial license.
+
+
 
