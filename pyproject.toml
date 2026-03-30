@@ -1,6 +1,6 @@
 [project]
 name = "sinapsis"
-version = "0.2.25"
+version = "0.2.27"
 description = "Modular and Universal AI platform"
 authors = [
     {name = "SinapsisAI", email = "dev@sinapsis.tech"},
@@ -28,6 +28,7 @@ all = [
 ]
 webapp = [
     "gradio<=5.23",
+    "opencv-python-headless>=4.13.0.92",
 ]
 
 

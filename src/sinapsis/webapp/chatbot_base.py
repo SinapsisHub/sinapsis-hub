@@ -11,7 +11,8 @@ from pydantic import ConfigDict
 from pydantic.dataclasses import dataclass
 from sinapsis_core.agent.agent import Agent
 from sinapsis_core.cli.run_agent_from_config import generic_agent_builder
-from sinapsis_core.data_containers.data_packet import DataContainer, ImagePacket, TextPacket
+from sinapsis_core.data_containers.data_packet import DataContainer, ImagePacket, LLMConversationPacket
+from sinapsis_core.data_containers.model_types import LLMIdentity
 from sinapsis_core.utils.env_var_keys import SINAPSIS_CACHE_DIR
 from sinapsis_core.utils.logging_utils import sinapsis_logger
 
@@ -33,17 +34,15 @@ class ChatbotConfig:
 
     Attributes:
         app_title (str): The title displayed on the chatbot interface.
-        login_message (str): The message shown on the login screen.
         login_image (str): URL of the image displayed on the login screen.
-        enable_memories (bool): Flag to enable memory features.
         examples (list[str] | None): Optional list of example inputs to show in the UI.
-        users_db_config (dict[str, str] | None): Database configuration for user authentication.
     """
 
     app_title: str = "Sinapsis Chatbot"
     login_image: str = SINAPSIS_AVATAR
-    # enable_memories: bool = True
     examples: list[str] | None = None
+    system_prompt: str = "You are a helpful assistant"
+    delete_history_config_path: str | None = None
 
 
 @dataclass
@@ -67,6 +66,18 @@ class ChatKeys:
     video_path: str = "VideoWriter"
 
 
+class HistoryChatKeys(ChatKeys):
+    """Extends `ChatKeys` to include references to templates used for chat history operations.
+
+    This class centralizes template key names used for fetching, saving, and deleting
+    chat history entries within the agent.
+    """
+
+    chat_fetch_template: str = "ChatHistoryFetch"
+    chat_save_template: str = "ChatHistorySave"
+    chat_delete_template: str = "ChatHistoryDelete"
+
+
 @dataclass(config=ConfigDict(arbitrary_types_allowed=True))
 class ChatInterfaceComponents:
     """Container for core UI components used in the chat interface.
@@ -75,12 +86,18 @@ class ChatInterfaceComponents:
         chatbot (gr.Chatbot): The chatbot message display area.
         textbox (gr.MultimodalTextbox): Input field for user messages and file uploads.
         session_state (gr.State): State object to track the user's session.
+        user_id (gr.Textbox): Hidden input used to scope user-specific chat operations.
+        chatbot_state (gr.State): Internal Gradio chat history state used by `ChatInterface`.
+        chatbot_value (gr.State): Mirror of the chatbot value managed by `ChatInterface`.
         chat_interface (gr.ChatInterface): Main Gradio chat interface component.
     """
 
     chatbot: gr.Chatbot
     textbox: gr.MultimodalTextbox
     session_state: gr.State
+    user_id: gr.Textbox
+    chatbot_state: gr.State
+    chatbot_value: gr.State
     chat_interface: gr.ChatInterface
 
 
@@ -97,6 +114,11 @@ class BaseChatbot:
     def __init__(self, config_file: str, config: ChatbotConfig | dict[str, Any] = ChatbotConfig()) -> None:
         self.config_file = config_file
         self.config = ChatbotConfig(**config) if isinstance(config, dict) else config
+        self.deletion_agent = (
+            self.initialize_agent(self.config.delete_history_config_path)
+            if self.config.delete_history_config_path
+            else None
+        )
         self.chatbot_height = "70vh"
         self.agent = self.initialize_agent(self.config_file)
         self.examples = (
@@ -157,8 +179,7 @@ class BaseChatbot:
             gr.update(interactive=False),
         )
 
-    @staticmethod
-    def generate_packet(message: dict[str, Any], user_id: str, session_id: str | None = None) -> DataContainer:
+    def generate_packet(self, message: dict[str, Any], user_id: str, session_id: str | None = None) -> DataContainer:
         """Constructs a DataContainer from user input including text, files, and optional session info.
 
         Args:
@@ -172,7 +193,12 @@ class BaseChatbot:
 
         container = DataContainer()
         if message.get(ChatKeys.text, False):
-            container.texts.append(TextPacket(content=message.get(ChatKeys.text), id=user_id, source=session_id))
+            identity = LLMIdentity(session_id=session_id, user_id=user_id, run_id=session_id)
+            container.llm_conversations.append(
+                LLMConversationPacket(
+                    content=message.get(ChatKeys.text), identity=identity, system_prompt=self.config.system_prompt
+                )
+            )
         for file_path in message.get(ChatKeys.files, []):
             if file_path.endswith(".wav"):
                 container.generic_data[ChatKeys.audio_path] = file_path
@@ -196,8 +222,8 @@ class BaseChatbot:
         result_container = self.agent(container)
         response = {}
 
-        if result_container.texts:
-            response[ChatKeys.text] = result_container.texts[-1].content
+        if result_container.llm_conversations:
+            response[ChatKeys.text] = result_container.llm_conversations[-1].response
 
         if result_container.images:
             image_packet = container.images[-1]
@@ -289,20 +315,34 @@ class BaseChatbot:
         )
         chatbot.clear(self.handle_clear_history, inputs=[session_state, user_id])
 
-        return ChatInterfaceComponents(chatbot, textbox, session_state, chat_interface)
+        return ChatInterfaceComponents(
+            chatbot,
+            textbox,
+            session_state,
+            user_id,
+            chat_interface.chatbot_state,
+            chat_interface.chatbot_value,
+            chat_interface,
+        )
 
     def clear_user_conversation(self, user_id: str, session_id: str | None = None) -> None:
         """Clears stored conversation data for the specified user/session.
 
-        Can be overridden by subclasses to customize additional actions when clearing conversations.
-
         Args:
             user_id (str): Unique user identifier.
-            session_id (str | None, optional): Optional session ID to scope clearing. Defaults to None.
+            session_id (str | None, optional):  Optional session ID to scope clearing. Defaults to None.
 
         Returns:
             Any: Result of the clear operation (to be defined by subclasses).
         """
+        filters = {"user_id": user_id}
+        if session_id:
+            filters["session_id"] = session_id
+
+        self.deletion_agent.update_template_attribute(HistoryChatKeys.chat_delete_template, "delete_args", filters)
+        self.deletion_agent.reset_state(HistoryChatKeys.chat_delete_template)
+        self.deletion_agent()
+        gr.Info("Conversation removed!")
 
     def handle_clear_history(self, session_state: gr.State, user_id: str) -> None:
         """Triggers the clearing of a user's chat history from the UI button.
@@ -311,8 +351,22 @@ class BaseChatbot:
             session_state (gr.State): Current session state object.
             user_id (str): Gradio request containing user/session info.
         """
-        # user_id = request.username if request.username else request.session_hash
-        self.clear_user_conversation(user_id, session_state)
+        if self.deletion_agent is not None:
+            self.clear_user_conversation(user_id, session_state)
+
+    def clear_history_and_chat(self, session_state: gr.State, user_id: str) -> tuple[list[dict[str, Any]], ...]:
+        """Clear persisted history and reset the visible chat transcript.
+
+        Args:
+            session_state (gr.State): Current session state object.
+            user_id (str): Gradio request containing user/session info.
+
+        Returns:
+            tuple[list[dict[str, Any]], ...]: Empty values for the chatbot and internal Gradio chat state.
+        """
+        self.handle_clear_history(session_state, user_id)
+        empty_history: list[dict[str, Any]] = []
+        return empty_history, empty_history, empty_history
 
     def _add_buttons(self, chat_components: ChatInterfaceComponents):
         """Adds 'Stop' and 'Start Chatbot' buttons to control agent lifecycle.
@@ -327,6 +381,13 @@ class BaseChatbot:
         restart_btn = gr.Button("Start Chatbot", interactive=False)
         stop_btn.click(self.stop_agent, outputs=[chat_components.textbox, stop_btn, restart_btn])
         restart_btn.click(self.restart_agent, outputs=[chat_components.textbox, stop_btn, restart_btn])
+        if self.deletion_agent is not None:
+            clear_history_btn = gr.Button("Clear history")
+            clear_history_btn.click(
+                self.clear_history_and_chat,
+                inputs=[chat_components.session_state, chat_components.user_id],
+                outputs=[chat_components.chatbot, chat_components.chatbot_state, chat_components.chatbot_value],
+            )
 
     def _inject_header_components(self):
         """Adds visual elements at the top of the UI (e.g., logo, app title).
