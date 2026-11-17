@@ -1,0 +1,57 @@
+services:
+  router:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+
+    command:
+      - python
+      - -m
+      - sinapsis_api.router
+
+    environment:
+      # The Router must bind to the container network rather than loopback so
+      # that API containers can connect to it.
+      SINAPSIS_API_ROUTER_API_ENDPOINT: "tcp://0.0.0.0:8765"
+      SINAPSIS_API_ROUTER_AGENT_ENDPOINT: "tcp://0.0.0.0:8766"
+      SINAPSIS_API_ROUTER_STREAM_ENDPOINT: "tcp://0.0.0.0:8767"
+
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+
+    command:
+      - uvicorn
+      - sinapsis_api.api.main:app
+      - --host
+      - "0.0.0.0"
+      - --port
+      - "8005"
+
+    environment:
+      # Docker Compose provides DNS resolution using the service name
+      # "router", so no host IP needs to be hardcoded.
+      SINAPSIS_API_ROUTER_API_ENDPOINT: "tcp://router:8765"
+      SINAPSIS_API_ROUTER_AGENT_ENDPOINT: "tcp://router:8766"
+      SINAPSIS_API_ROUTER_STREAM_ENDPOINT: "tcp://router:8767"
+      # Explicit container consent. Off unless opted in by the operator.
+      SINAPSIS_TELEMETRY: "${SINAPSIS_TELEMETRY:-0}"
+      SINAPSIS_TELEMETRY_STATE_DIR: "/var/lib/sinapsis/telemetry"
+
+    volumes:
+      # Persistent queue survives container recreation; publishing is automatic only on opt-in.
+      - local_api_telemetry:/var/lib/sinapsis/telemetry
+
+    ports:
+      - "8005:8005"
+
+    depends_on:
+      - router
+
+    restart: unless-stopped
+
+volumes:
+  local_api_telemetry:
