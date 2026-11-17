@@ -1,0 +1,105 @@
+[project]
+name = "sinapsis_cli"
+version = "1.0.0"
+description = "Sinapsis CLI for interaction with sinapsis services locally through a venv, docker or remotely with the sinapsis cloud api"
+readme = "README.md"
+authors = [
+    { name = "Ariel Ruiz-Garcia", email = "ariel@sinapsis.tech" },
+    { name = "Nimesh Patel", email = "nimesh@sinapsis.tech" },
+]
+maintainers = [
+    { name = "sinapsis", email = "dev@sinapsis.tech" },
+]
+
+requires-python = ">=3.13"
+dependencies = [
+    "platformdirs>=4.11.3",
+    "supabase>=2.31.0",
+    "tomli-w>=1.2.0",
+    "tomli>=2.0.0 ; python_full_version < '3.11'",
+    "click>=8.4.2",
+    "typer>=0.27.1",
+    "sinapsis>=1,<2",
+    "sinapsis-contracts>=1.0.0,<2",
+    "sinapsis-sdk>=1.0.0,<2",
+    "pyperclip>=1.11.0",
+    "keyring>=25.7.0",
+]
+license = "MIT OR Apache-2.0"
+license-files = ["LICENSE-MIT", "LICENSE-APACHE"]
+
+[project.scripts]
+sinx = "sinapsis_cli.main:main"
+sinx-cloud =  "sinapsis_cli.main:main_cloud"
+sinx-api = "sinapsis_cli.main:main_local_api"
+sinx-venv = "sinapsis_cli.main:main_local_venv"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+
+[tool.ruff]
+lint.select = [
+    "ARG",
+    "ANN",
+    "BLE",
+    "C4",
+    "D",
+    "E",
+    "F",
+    "FIX",
+    "FLY",
+    "I",
+    "PERF",
+    "PIE",
+    "PLR6301",
+    "RUF",
+    "RSE",
+    "SIM",
+    "SLOT",
+    "T10",
+    "T20",
+    "TD",
+    "TID",
+    "UP",
+    "W",
+]
+lint.preview = true
+lint.pydocstyle.convention = "google"
+lint.ignore = [
+    "ANN401",
+    "D100",
+    "D104",
+    "D107",
+    "RUF200",
+]
+lint.extend-select = [
+    "D102",
+    "D103",
+]
+line-length = 120
+show-fixes = true
+target-version = "py313"
+fix = true
+exclude = ["src/sinapsis_contrib/testing", "tests"]
+
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sinapsis_cli"]
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.6.2",
+    "ruff>=0.8.3",
+    "ty>=0.0.32",
+
+]
+
+[project.urls]
+Homepage = "https://sinapsis.tech"
+Documentation = "https://docs.sinapsis.tech/docs"
+Tutorials = "https://docs.sinapsis.tech/tutorials"
+Repository = "https://github.com/SinapsisHub/sinapsis-hub.git"
