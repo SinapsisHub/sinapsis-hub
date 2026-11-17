@@ -19,4 +19,3 @@ templates:
   class_name: DisplayHelloWorld
   template_input: HelloWorld
   attributes: {}  # we did not define any attributes in our template
-

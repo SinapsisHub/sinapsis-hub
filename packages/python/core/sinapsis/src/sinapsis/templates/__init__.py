@@ -1,12 +1,12 @@
-# -*- coding: utf-8 -*-
 import importlib
 import sys
+from collections.abc import Callable
 from importlib import metadata
 from types import ModuleType
-from typing import Callable
 
-from sinapsis_core.utils.env_var_keys import SinapsisEnvVarDefaults
 from sinapsis_core.utils.logging_utils import sinapsis_logger
+
+from sinapsis.env_vars import SinapsisEnvVarDefaults
 
 _root_lib_path = "sinapsis.templates"
 _core_lib_path = "sinapsis_core.template_base"
@@ -68,6 +68,11 @@ def smart_search() -> dict:
     for available_dist in metadata.distributions():
         dist_name = available_dist._normalized_name  # type:ignore[attr-defined]
         if dist_name.startswith("sinapsis_") and dist_name not in excluded_dists:
+            if any("packages" in file.parts for file in metadata.files(dist_name)):
+                sinapsis_logger.debug(
+                    f"Skipping {dist_name} as it is a monorepo, it's subpackages will be added individually."
+                )
+                continue
             sinapsis_logger.debug(f"Adding package {available_dist.name}=={available_dist.version}")
             available_sinapsis_templates |= _import_template_package(f"{dist_name}.templates")
 
@@ -93,7 +98,8 @@ def __getattr__(name: str) -> Callable | ModuleType:
         f"Template `{name}` not found. Please ensure it is in {_root_lib_path}.\nIf you have"
         f"implemented a sinapsis package, please ensure it is installed,\n\t e.g., using uv|pdm|poetry|pip. "
         f"\notherwise, please set the `ADDITIONAL_TEMPLATE_PATHS` environment variable to make your"
-        f"templates discoverable, e.g. \n\texport ADDITIONAL_TEMPLATE_PATHS='[\"path/to/my_package/templates/\"]'"
+        f"templates discoverable, e.g."
+        f" \n\texport ADDITIONAL_TEMPLATE_PATHS='path/to/my_package/templates/,path/to/another/package'"
     )
 
 
