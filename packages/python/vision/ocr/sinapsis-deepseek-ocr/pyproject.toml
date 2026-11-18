@@ -1,0 +1,127 @@
+[project]
+name = "sinapsis-deepseek-ocr"
+description = "A powerful DeepSeek-based Optical Character Recognition (OCR) implementation supporting text extraction and grounding."
+requires-python = ">=3.13"
+version = "1.0.0"
+authors = [
+    { name = "Ariel Ruiz-Garcia", email = "ariel@sinapsis.tech" },
+]
+maintainers = [
+    { name = "sinapsis", email = "dev@sinapsis.tech" },
+]
+license = "MIT OR Apache-2.0"
+license-files = ["LICENSE-MIT", "LICENSE-APACHE"]
+readme = "README.md"
+dependencies = [
+    "sinapsis>=1,<2",
+    "flash-attn>=2.8.3",
+    "torch==2.8.0",
+    "transformers==4.46.3",
+    "tokenizers>=0.20.3",
+    "einops>=0.8.1",
+    "addict>=2.4.0",
+    "easydict>=1.13",
+    "accelerate>=1.12.0",
+    "sinapsis-generic-data-tools>=0.1.11",
+]
+
+
+[project.optional-dependencies]
+sinapsis-data-readers = [
+    "sinapsis-data-readers[opencv]>=0.1.0",
+]
+sinapsis-data-writers = [
+    "sinapsis-data-writers>=0.1.0",
+]
+sinapsis-data-visualization = [
+    "sinapsis-data-visualization[visualization-matplotlib]>=0.1.0",
+]
+all = [
+    "sinapsis-deepseek-ocr[sinapsis-data-readers]",
+    "sinapsis-deepseek-ocr[sinapsis-data-writers]",
+    "sinapsis-deepseek-ocr[sinapsis-data-visualization]",
+]
+
+
+[project.urls]
+Homepage = "https://sinapsis.tech"
+Documentation = "https://docs.sinapsis.tech/docs"
+Tutorials = "https://docs.sinapsis.tech/tutorials"
+Repository = "https://github.com/SinapsisHub/sinapsis-hub.git"
+
+
+[[tool.uv.index]]
+name = "sinapsis-protected"
+url = "https://private.pypi.sinapsis.tech/"
+explicit = true
+
+
+[[tool.uv.index]]
+name = "sinapsis-private"
+url = "https://pypi.sinapsis.tech/"
+explicit = true
+
+
+[tool.uv.sources]
+flash-attn = [
+  { url = "https://github.com/mjun0812/flash-attention-prebuild-wheels/releases/download/v0.5.4/flash_attn-2.8.3+cu124torch2.8-cp310-cp310-linux_x86_64.whl", marker = "python_version == '3.10'" },
+  { url = "https://github.com/mjun0812/flash-attention-prebuild-wheels/releases/download/v0.5.4/flash_attn-2.8.3+cu124torch2.8-cp311-cp311-linux_x86_64.whl", marker = "python_version == '3.11'" },
+  { url = "https://github.com/mjun0812/flash-attention-prebuild-wheels/releases/download/v0.5.4/flash_attn-2.8.3+cu124torch2.8-cp312-cp312-linux_x86_64.whl", marker = "python_version == '3.12'" }
+]
+
+
+[tool.ruff]
+line-length = 120
+show-fixes = true
+
+
+[tool.ruff.lint]
+select = [
+    "ARG",
+    "ANN",
+    "BLE",
+    "C4",
+    "E",
+    "F",
+    "FIX",
+    "FLY",
+    "I",
+    "PERF",
+    "PIE",
+    "RUF",
+    "RSE",
+    "SIM",
+    "SLOT",
+    "T10",
+    "T20",
+    "TD",
+    "TID",
+]
+ignore = [
+    "ANN401",
+    "E501",   # trailing-comma
+]
+
+
+[tool.ruff.format]
+skip-magic-trailing-comma = true
+
+
+[dependency-groups]
+dev = [
+    "ruff>=0.8.3",
+    "pre-commit>=4.0.1",
+]
+
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sinapsis_deepseek_ocr"]
+
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+
+[tool.hatch.version]
+source = "vcs"
