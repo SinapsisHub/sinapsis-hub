@@ -38,7 +38,7 @@ Compose and build AI systems from reusable components. Combine models, framework
 ---
 ## 😊 Community
 
-Join us on our <a href="https://discord.com/invite/uJftCqCt"> Discord Server </a> to chat live with our engineers. We would love feedback and active discussions which can help shape where Sinapsis goes.
+Join us on our <a href="https://discord.gg/uuBqQqu2vS"> Discord Server </a> to chat live with our engineers. We would love feedback and active discussions which can help shape where Sinapsis goes.
 
 ---
 
