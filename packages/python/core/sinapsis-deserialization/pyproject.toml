@@ -1,0 +1,140 @@
+[project]
+name = "sinapsis_deserialization"
+description = "Deserialization utilities for Sinapsis pipelines."
+requires-python = ">=3.13"
+version = "1.0.0"
+authors = [
+    { name = "Ariel Ruiz-Garcia", email = "ariel@sinapsis.tech" },
+    { name = "Nimesh Patel", email = "nimesh@sinapsis.tech" },
+]
+maintainers = [
+    { name = "sinapsis", email = "dev@sinapsis.tech" },
+]
+license = "MIT OR Apache-2.0"
+license-files = ["LICENSE-MIT", "LICENSE-APACHE"]
+readme = "README.md"
+dependencies = [
+    "sinapsis>=1,<2",
+]
+
+
+[project.optional-dependencies]
+msgpack = [
+    "msgpack"
+]
+darts = [
+    "darts>=0.41.0",
+]
+numpy = [
+    "numpy>=2.2.6",
+]
+pandas = [
+    "pandas>=2.3.3",
+]
+sinapsis-generic-data-tools = [
+    "sinapsis-generic-data-tools[all]>=1.0.0",
+]
+soundfile = [
+    "soundfile>=0.13.1",
+]
+torch = [
+    "torch>=2.8.0",
+]
+
+all = [
+    "sinapsis_deserialization[darts,msgpack,numpy,pandas,sinapsis-generic-data-tools,soundfile,torch]>=1.0.0",
+]
+
+
+[project.urls]
+Homepage = "https://sinapsis.tech"
+Documentation = "https://docs.sinapsis.tech/docs/latest"
+Tutorials = "https://docs.sinapsis.tech/docs/latest/tutorials"
+Repository = "https://github.com/SinapsisHub/sinapsis-hub"
+Issues = "https://github.com/SinapsisHub/sinapsis-hub/issues"
+Discord = "https://discord.gg/uuBqQqu2vS"
+
+
+[[tool.uv.index]]
+name = "sinapsis-protected"
+url = "https://private.pypi.sinapsis.tech/"
+explicit = true
+
+
+[[tool.uv.index]]
+name = "sinapsis-private"
+url = "https://pypi.sinapsis.tech/"
+explicit = true
+
+
+[tool.ruff]
+line-length = 120
+show-fixes = true
+target-version = "py313"
+fix = true
+
+
+[tool.ruff.lint]
+select = [
+    "ARG",
+    "ANN",
+    "BLE",
+    "C4",
+    "E",
+    "F",
+    "FIX",
+    "FLY",
+    "I",
+    "PERF",
+    "PIE",
+    "RUF",
+    "RSE",
+    "SIM",
+    "SLOT",
+    "T10",
+    "T20",
+    "TD",
+    "TID",
+]
+ignore = [
+    "ANN401",
+    "E501",   # trailing-comma
+]
+preview = true
+extend-select = [
+    "D102",
+    "D103",
+]
+
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+
+[tool.ruff.format]
+skip-magic-trailing-comma = true
+
+
+[tool.ty.rules]
+unresolved-import = "ignore"
+
+
+[dependency-groups]
+dev = [
+    "ruff>=0.8.3",
+    "pre-commit>=4.0.1",
+    "ty>=0.0.34",
+]
+
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sinapsis_deserialization"]
+
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+
+[tool.hatch.version]
+source = "vcs"
