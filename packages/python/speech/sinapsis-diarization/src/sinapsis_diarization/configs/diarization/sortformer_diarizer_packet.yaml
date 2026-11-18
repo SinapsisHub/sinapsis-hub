@@ -1,0 +1,22 @@
+agent:
+  name: sortformer_diarizer_packet
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+
+- template_name: AudioReaderPydub
+  class_name: AudioReaderPydub
+  template_input: InputTemplate
+  attributes:
+    root_dir: path_to_root_dir
+    audio_file_path: audio_sample.mp3
+
+- template_name: SinapsisSortformerDiarizer
+  class_name: SinapsisSortformerDiarizer
+  template_input: AudioReaderPydub
+  attributes:
+    model_name: nvidia/diar_streaming_sortformer_4spk-v2.1
+    device: cuda
+    chunk_size_in_secs: -1

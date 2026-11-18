@@ -1,0 +1,23 @@
+agent:
+  name: WhisperxDiarizedTranscription_agent
+  description: "Agent with WhisperxDiarizedTranscription."
+  attributes:
+    queue_name: WhisperxDiarizedTranscription
+    templates_to_profile: "WhisperxDiarizedTranscription"
+    description: "WhisperxDiarizedTranscription worker"
+
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: WhisperxDiarizedTranscription
+  class_name: WhisperxDiarizedTranscription
+  template_input: InputTemplate
+  attributes:
+    device: cuda
+    sample_rate: 16000
+    chunk_size_in_secs: -1
+    search_window: 5.0
+    min_speakers: 1
+    max_speakers: 2

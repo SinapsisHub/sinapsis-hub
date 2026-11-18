@@ -1,0 +1,38 @@
+agent:
+  name: dfine_inference
+  description: "Agent that runs inferences on a dataset with pre-trained D-FINE nano model"
+
+templates:
+  - template_name: InputTemplate
+    class_name: InputTemplate
+    attributes: {}
+
+  - template_name: FolderImageDatasetCV2
+    class_name: FolderImageDatasetCV2
+    template_input: InputTemplate
+    attributes:
+      data_dir: datasets/coco
+
+  - template_name: DFINEInference
+    class_name: DFINEInference
+    template_input: FolderImageDatasetCV2
+    attributes:
+      model_path: ustc-community/dfine-small-coco
+      batch_size: 16
+      threshold: 0.5
+      device: cuda
+
+  - template_name: BBoxDrawer
+    class_name: BBoxDrawer
+    template_input: DFINEInference
+    attributes:
+      overwrite: true
+      randomized_color: false
+
+  - template_name: ImageSaver
+    class_name: ImageSaver
+    template_input: BBoxDrawer
+    attributes:
+      root_dir: datasets
+      save_dir: output
+      extension: png

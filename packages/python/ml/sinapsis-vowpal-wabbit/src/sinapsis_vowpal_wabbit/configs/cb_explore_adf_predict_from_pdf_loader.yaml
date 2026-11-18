@@ -1,0 +1,55 @@
+agent:
+  name: sentiment-with-pdf
+
+templates:
+  - template_name: InputTemplate
+    class_name: InputTemplate
+    attributes: {}
+
+  - template_name: PyPDFLoaderWrapper_70780
+    class_name: PyPDFLoaderWrapper
+    template_input: InputTemplate
+    attributes:
+      pypdfloader_init:
+        mode: single
+        file_path: "path"
+        extract_images: false
+        extraction_mode: plain
+        pages_delimiter: "\n\f"
+        extraction_kwargs: { }
+        images_inner_format: text
+      #add_document_as_text_packet: True
+
+  - template_name: Splitter
+    class_name: RegexTurnSplitter
+    template_input: InputTemplate
+    attributes:
+      generic_key: PyPDFLoaderWrapper_70780
+      pattern_1: ['User 1', 'User 2']
+      pattern_2: "\\d{2}:\\d{2}"
+
+      return_as_text_packets: true
+
+  - template_name: CBExploreADFPredict
+    class_name: CBExploreADFPredictEmbeddings
+    template_input: Splitter
+    attributes:
+      random_seed: 42
+      actions:
+        [
+          "contact_customer_service",
+          "schedule_follow_up_meeting",
+          "send_email_with_product_information",
+          "register_new_client",
+          "provide_financing_options",
+        ]
+      model_path: artifacts/cb_model-embeddings-quadratic.vw
+      threshold: 0
+      remove_special_characters: True
+      vw_workspace_params:
+        exploration_method: epsilon
+        exploration_value: 0.3
+        adaptive: True
+        normalized: True
+        quiet: True
+        quadratic_interactions: [":A"]

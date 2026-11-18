@@ -1,0 +1,16 @@
+agent:
+  name: kokoro_tts_agent
+  description: "Agent that generates speech from text using the Kokoro-TTS model."
+  attributes:
+    queue_name: KokoroTTS
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: KokoroTTS
+  class_name: KokoroTTS
+  template_input: InputTemplate
+  attributes:
+    speed: 1
+    voice: af_heart

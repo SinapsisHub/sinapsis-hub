@@ -1,0 +1,63 @@
+agent:
+  name: cb_explore_adf
+  description:
+  long_description:
+
+templates:
+  - template_name: InputTemplate
+    class_name: InputTemplate
+    attributes: {}
+
+  - template_name: CSVReader
+    class_name: CSVDatasetReader
+    template_input: InputTemplate
+    attributes:
+      root_dir: ./artifacts
+      path_to_csv: bitext.csv
+
+  - template_name: CBExploreADFLearn
+    class_name: CBExploreADFLearn
+    template_input: CSVReader
+    attributes:
+      random_seed: 42
+      actions:
+        [
+          "cancel_order",
+          "change_order",
+          "change_shipping_address",
+          "check_cancellation_fee",
+          "check_invoice",
+          "check_payment_methods",
+          "check_refund_policy",
+          "complaint",
+          "contact_customer_service",
+          "contact_human_agent",
+          "create_account",
+          "delete_account",
+          "delivery_options",
+          "delivery_period",
+          "edit_account",
+          "get_invoice",
+          "get_refund",
+          "newsletter_subscription",
+          "payment_issue",
+          "place_order",
+          "recover_password",
+          "registration_problems",
+          "review",
+          "set_up_shipping_address",
+          "switch_account",
+          "track_order",
+          "track_refund",
+        ]
+      instruction_column: "instruction"
+      true_action_column: "intent"
+      root_dir: artifacts
+      save_path: cb_model-clean-text.vw
+      epochs: 10
+      vw_workspace_params:
+        exploration_method: bag
+        exploration_value: 5
+        adaptive: True
+        normalized: True
+        quiet: True

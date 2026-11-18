@@ -1,0 +1,24 @@
+agent:
+  name: SinapsisPyannoteDiarizer_agent
+  description: "Agent with SinapsisPyannoteDiarizer."
+  attributes:
+    queue_name: SinapsisPyannoteDiarizer
+    templates_to_profile: "SinapsisPyannoteDiarizer"
+    description: "SinapsisPyannoteDiarizer worker"
+
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: SinapsisPyannoteDiarizer
+  class_name: SinapsisPyannoteDiarizer
+  template_input: InputTemplate
+  attributes:
+    model_name: pyannote/speaker-diarization-community-1
+    device: cuda
+    sample_rate: 16000
+    chunk_size_in_secs: -1
+    search_window: 5.0
+    audio_file_path: null
+    num_speakers: 2

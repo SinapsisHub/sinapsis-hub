@@ -1,0 +1,15 @@
+agent:
+  name: generic_data_inference
+
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: XGBClassifierInference
+  class_name: XGBoostInference
+  template_input: InputTemplate
+  attributes:
+    model_path: "artifacts/models/australian_credit_model.xgb"
+    generic_field_key: "input"
+    target_key: target

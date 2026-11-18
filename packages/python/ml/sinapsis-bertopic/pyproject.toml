@@ -1,0 +1,130 @@
+[project]
+name = "sinapsis-bertopic"
+description = "Package for topic modeling using BERTopic, including templates for fitting models and making predictions."
+requires-python = ">=3.13"
+version = "1.0.0"
+authors = [
+    { name = "Ariel Ruiz-Garcia", email = "ariel@sinapsis.tech" },
+]
+maintainers = [
+    { name = "sinapsis", email = "dev@sinapsis.tech" },
+]
+license = "MIT OR Apache-2.0"
+license-files = ["LICENSE-MIT", "LICENSE-APACHE"]
+readme = "README.md"
+dependencies = [
+    "bertopic>=0.17.4",
+    "kaleido>=1.2.0",
+    "pillow>=12.1.1",
+    "sinapsis>=1,<2",
+]
+
+
+[project.optional-dependencies]
+wikipedia-reader = [
+    "sinapsis-langchain-readers[langchain-wikipedia-readers]>=0.1.8",
+]
+sinapsis-data-writers = [
+    "sinapsis-data-writers[opencv]>=0.1.16",
+]
+all = [
+    "sinapsis-bertopic[sinapsis-data-readers,sinapsis-data-writers,wikipedia-reader]",
+]
+sinapsis-data-readers = [
+    "sinapsis-data-readers>=0.1.28",
+]
+
+
+[project.urls]
+Homepage = "https://sinapsis.tech"
+Documentation = "https://docs.sinapsis.tech/docs"
+Tutorials = "https://docs.sinapsis.tech/tutorials"
+Repository = "https://github.com/SinapsisHub/sinapsis-hub.git"
+
+
+[[tool.uv.index]]
+name = "sinapsis-protected"
+url = "https://private.pypi.sinapsis.tech/"
+explicit = true
+
+
+[[tool.uv.index]]
+name = "sinapsis-private"
+url = "https://pypi.sinapsis.tech/"
+explicit = true
+
+
+[tool.uv.sources]
+sinapsis-bertopic = { workspace = true }
+
+
+[tool.ruff]
+line-length = 120
+show-fixes = true
+target-version = "py310"
+fix = true
+
+
+[tool.ruff.lint]
+select = [
+    "ARG",
+    "ANN",
+    "BLE",
+    "C4",
+    "E",
+    "F",
+    "FIX",
+    "FLY",
+    "I",
+    "PERF",
+    "PIE",
+    "RUF",
+    "RSE",
+    "SIM",
+    "SLOT",
+    "T10",
+    "T20",
+    "TD",
+    "TID",
+]
+ignore = [
+    "ANN401",
+    "E501",   # trailing-comma
+]
+preview = true
+extend-select = [
+    "D102",
+    "D103",
+]
+
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+
+[tool.ruff.format]
+skip-magic-trailing-comma = true
+
+
+[tool.ty.rules]
+unknown-argument = "ignore"
+
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.6.0",
+    "ty>=0.0.33",
+]
+
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sinapsis_bertopic"]
+
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+
+[tool.hatch.version]
+source = "vcs"

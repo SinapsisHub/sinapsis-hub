@@ -1,0 +1,56 @@
+agent:
+  name: cb_explore_adf
+  description: "Agent to perform intent prediction using CBExploreADF."
+  long_description: >
+    "An agent that utilizes the CBExploreADF algorithm to predict user intents based on input data.
+    This agent is designed to handle a variety of actions and can be used in scenarios such as customer support,
+    e-commerce, and more."
+
+templates:
+  - template_name: InputTemplate
+    class_name: InputTemplate
+    attributes: {}
+
+  - template_name: TextInput
+    class_name: TextInput
+    template_input: InputTemplate
+    attributes:
+      source: local
+      text: Questions about "Inheritance Tax" treaties between the UAE and the United Kingdom.
+
+  - template_name: TextInput1
+    class_name: TextInput
+    template_input: TextInput
+    attributes:
+      source: local
+      text: Wants a 3D LiDAR scan of the property to send to their offshore design team.
+
+  - template_name: TextInput2
+    class_name: TextInput
+    template_input: TextInput1
+    attributes:
+      source: local
+      text: Monitoring the "Interest Rate" announcements from the European Central Bank (ECB).
+  - template_name: CBExploreADFPredict
+    class_name: CBExploreADFPredictEmbeddings
+    template_input: TextInput2
+    attributes:
+      random_seed: 42
+      actions:
+        [
+          provide_technical_diligence,
+          nurture_with_market_data,
+          escalate_to_specialist,
+          initiate_contract_sequence,
+          schedule_site_inspection,
+        ]
+
+      model_path: artifacts/models/cb_model-embeddings-summary-clean.vw
+      threshold: 0.1
+      vw_workspace_params:
+        exploration_method: epsilon
+        exploration_value: 0.3
+        adaptive: True
+        normalized: True
+        quiet: False
+        quadratic_interactions: [":A"]

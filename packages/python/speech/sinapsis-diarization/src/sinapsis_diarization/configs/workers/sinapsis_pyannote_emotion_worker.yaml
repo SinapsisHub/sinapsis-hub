@@ -1,0 +1,21 @@
+agent:
+  name: PyannoteEmotionTranscription_agent
+  description: "Agent with PyannoteEmotionTranscription."
+  attributes:
+    queue_name: PyannoteEmotionTranscription
+    templates_to_profile: "PyannoteEmotionTranscription"
+    description: "PyannoteEmotionTranscription worker"
+
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: PyannoteEmotionTranscription
+  class_name: PyannoteEmotionTranscription
+  template_input: InputTemplate
+  attributes:
+    device: cuda
+    sample_rate: 16000
+    chunk_size_in_secs: -1
+    search_window: 5.0

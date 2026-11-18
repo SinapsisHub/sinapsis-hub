@@ -1,0 +1,56 @@
+agent:
+  name: credit_approval_visualization
+
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: fetch_openmlWrapper_viz
+  class_name: fetch_openmlWrapper
+  template_input: InputTemplate
+  attributes:
+    split_dataset: false
+    train_size: 1.0
+    fetch_openml:
+      data_id: 45577
+      data_home: null
+      target_column: "SeriousDlqin2yrs"
+      cache: true
+      return_X_y: false
+      as_frame: true
+      n_retries: 3
+      delay: 1.0
+      parser: "pandas"
+      read_csv_kwargs:
+        dtype:
+          SeriousDlqin2yrs: "category"
+          RevolvingUtilizationOfUnsecuredLines: "float64"
+          age: "Int64"
+          NumberOfTime30-59DaysPastDueNotWorse: "Int64"
+          DebtRatio: "float64"
+          MonthlyIncome: "float64"
+          NumberOfOpenCreditLinesAndLoans: "Int64"
+          NumberOfTimes90DaysLate: "Int64"
+          NumberRealEstateLoansOrLines: "Int64"
+          NumberOfTime60-89DaysPastDueNotWorse: "Int64"
+          NumberOfDependents: "Int64"
+
+- template_name: TabularDataVisualization
+  class_name: TabularDataVisualization
+  template_input: fetch_openmlWrapper_viz
+  attributes:
+    generic_field_key: "fetch_openmlWrapper_viz"
+    target_column: "target"
+    fig_title: "Credit Risk Analysis - Give Me Some Credit"
+    y_label: "Frequency"
+    x_label: "Value"
+    fig_width: 12
+    fig_height: 8
+    save_image_dir: "artifacts/visualizations"
+    fig_name: "give_me_some_credit"
+    histogram: true
+    box_plot: true
+    correlation: true
+    categorical_dist: true
+    pie_chart: true

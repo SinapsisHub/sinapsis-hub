@@ -1,0 +1,21 @@
+agent:
+  name: SortformerDiarizedTranscription_agent
+  description: "Agent with SortformerDiarizedTranscription."
+  attributes:
+    queue_name: SortformerDiarizedTranscription
+    templates_to_profile: "SortformerDiarizedTranscription"
+    description: "SortformerDiarizedTranscription worker"
+
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: SortformerDiarizedTranscription
+  class_name: SortformerDiarizedTranscription
+  template_input: InputTemplate
+  attributes:
+    device: cuda
+    sample_rate: 16000
+    chunk_size_in_secs: -1
+    search_window: 5.0

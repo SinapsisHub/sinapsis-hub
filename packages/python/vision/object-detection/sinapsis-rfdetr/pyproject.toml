@@ -1,0 +1,113 @@
+[project]
+name = "sinapsis-rfdetr"
+description = "Training and inference templates based on the RF-DETR object detection model"
+requires-python = ">=3.13"
+version = "1.0.0"
+authors = [
+    { name = "Ariel Ruiz-Garcia", email = "ariel@sinapsis.tech" },
+]
+maintainers = [
+    { name = "sinapsis", email = "dev@sinapsis.tech" },
+]
+license = "MIT OR Apache-2.0"
+license-files = ["LICENSE-MIT", "LICENSE-APACHE"]
+readme = "README.md"
+dependencies = [
+    "numpy==1.26.4",
+    "onnxruntime>=1.21.0",
+    "protobuf==3.20.2",
+    "rfdetr[metrics]==1.2.1",
+    "sinapsis>=1,<2",
+]
+
+
+[project.optional-dependencies]
+
+all = [
+    "sinapsis-rfdetr[data-tools]",
+]
+data-tools = [
+    "sinapsis-data-readers>=0.1.2",
+    "sinapsis-data-visualization[all]>=0.1.0",
+    "sinapsis-data-writers[all]>=0.1.1",
+]
+
+
+[project.urls]
+Homepage = "https://sinapsis.tech"
+Documentation = "https://docs.sinapsis.tech/docs"
+Tutorials = "https://docs.sinapsis.tech/tutorials"
+Repository = "https://github.com/SinapsisHub/sinapsis-hub.git"
+
+
+[[tool.uv.index]]
+name = "sinapsis-protected"
+url = "https://private.pypi.sinapsis.tech/"
+explicit = true
+
+
+[[tool.uv.index]]
+name = "sinapsis-private"
+url = "https://pypi.sinapsis.tech/"
+explicit = true
+
+
+[tool.uv.sources]
+sinapsis-rfdetr = { workspace = true }
+
+
+[tool.ruff]
+line-length = 120
+show-fixes = true
+
+
+[tool.ruff.lint]
+select = [
+    "ARG",
+    "ANN",
+    "BLE",
+    "C4",
+    "E",
+    "F",
+    "FIX",
+    "FLY",
+    "I",
+    "PERF",
+    "PIE",
+    "RUF",
+    "RSE",
+    "SIM",
+    "SLOT",
+    "T10",
+    "T20",
+    "TD",
+    "TID",
+]
+ignore = [
+    "ANN401",
+    "E501",   # trailing-comma
+]
+
+
+[tool.ruff.format]
+skip-magic-trailing-comma = true
+
+
+[dependency-groups]
+dev = [
+    "ruff>=0.8.3",
+    "pre-commit>=4.0.1",
+]
+
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sinapsis_rfdetr"]
+
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+
+[tool.hatch.version]
+source = "vcs"

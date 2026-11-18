@@ -1,0 +1,24 @@
+agent:
+  name: parakeet_sortformer_pipeline_packet
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: AudioReaderPydub
+  class_name: AudioReaderPydub
+  template_input: InputTemplate
+  attributes:
+    root_dir: .
+    audio_file_path: test_conversation.wav
+
+- template_name: PyannoteDiarizedTranscription
+  class_name: PyannoteDiarizedTranscription
+  template_input: AudioReaderPydub
+  attributes:
+    asr_model_name: nvidia/parakeet-tdt-0.6b-v2
+    diarization_model_name: pyannote/speaker-diarization-community-1
+    device: cpu
+    sample_rate: 16000
+    chunk_size_in_secs: 10
+    num_speakers: 2

@@ -1,0 +1,21 @@
+agent:
+  name: SortformerEmotionTranscription_agent
+  description: "Agent with SortformerEmotionTranscription."
+  attributes:
+    queue_name: SortformerEmotionTranscription
+    templates_to_profile: "SortformerEmotionTranscription"
+    description: "SortformerEmotionTranscription worker"
+
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: SortformerEmotionTranscription
+  class_name: SortformerEmotionTranscription
+  template_input: InputTemplate
+  attributes:
+    device: cuda
+    sample_rate: 16000
+    chunk_size_in_secs: -1
+    search_window: 5.0

@@ -1,0 +1,123 @@
+[project]
+name = "sinapsis-fast-alpr"
+description = "Fast ALPR license plate recognition"
+requires-python = ">=3.13"
+version = "1.0.0"
+authors = [
+    { name = "Ariel Ruiz-Garcia", email = "ariel@sinapsis.tech" },
+]
+maintainers = [
+    { name = "sinapsis", email = "dev@sinapsis.tech" },
+]
+license = "MIT OR Apache-2.0"
+license-files = ["LICENSE-MIT", "LICENSE-APACHE"]
+readme = "README.md"
+dependencies = [
+    "fast-alpr[onnx-gpu]>=0.4.0",
+    "onnxruntime==1.23.0",
+    "onnxruntime-gpu==1.23.0",
+    "opencv-contrib-python>=4.11.0.86",
+    "sinapsis>=1,<2",
+    "torch==2.8.0",
+    "transformers<5.0",
+]
+
+
+[project.optional-dependencies]
+detection = [
+    "sinapsis-rfdetr>=0.1.14",
+]
+tracking = [
+    "sinapsis-supervision>=0.1.6",
+]
+
+all = [
+    "sinapsis-fast-alpr[detection,tracking,data-tools]",
+]
+data-tools = [
+    "sinapsis-data-readers>=0.1.28",
+    "sinapsis-data-visualization>=0.1.13",
+    "sinapsis-data-writers>=0.1.16",
+]
+
+
+[project.urls]
+Homepage = "https://sinapsis.tech"
+Documentation = "https://docs.sinapsis.tech/docs"
+Tutorials = "https://docs.sinapsis.tech/tutorials"
+Repository = "https://github.com/SinapsisHub/sinapsis-hub.git"
+
+
+[project.scripts]
+pick-coordinates = "sinapsis_fast_alpr.cli.pick_coordinates:main"
+meters-per-pixel = "sinapsis_fast_alpr.cli.meters_per_pixel:main"
+
+
+[[tool.uv.index]]
+name = "sinapsis-protected"
+url = "https://private.pypi.sinapsis.tech/"
+explicit = true
+
+
+[[tool.uv.index]]
+name = "sinapsis-private"
+url = "https://pypi.sinapsis.tech/"
+explicit = true
+
+
+[tool.ruff]
+line-length = 120
+show-fixes = true
+
+
+[tool.ruff.lint]
+select = [
+    "ARG",
+    "ANN",
+    "BLE",
+    "C4",
+    "E",
+    "F",
+    "FIX",
+    "FLY",
+    "I",
+    "PERF",
+    "PIE",
+    "RUF",
+    "RSE",
+    "SIM",
+    "SLOT",
+    "T10",
+    "T20",
+    "TD",
+    "TID",
+]
+ignore = [
+    "ANN401",
+    "E501",   # trailing-comma
+]
+
+
+[tool.ruff.format]
+skip-magic-trailing-comma = true
+
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.5.1",
+    "ruff>=0.15.10",
+    "ty>=0.0.29",
+]
+
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sinapsis_fast_alpr"]
+
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+
+[tool.hatch.version]
+source = "vcs"

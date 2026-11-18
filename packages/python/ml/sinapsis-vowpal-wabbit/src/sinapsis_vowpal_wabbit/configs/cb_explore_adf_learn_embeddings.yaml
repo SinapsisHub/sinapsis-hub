@@ -1,0 +1,47 @@
+agent:
+  name: cb_explore_adf
+  description:
+  long_description:
+
+templates:
+  - template_name: InputTemplate
+    class_name: InputTemplate
+    attributes: {}
+
+  - template_name: CSVReader
+    class_name: CSVDatasetReader
+    template_input: InputTemplate
+    attributes:
+      root_dir: ./artifacts/data
+      path_to_csv: summary_dataset.csv
+
+  - template_name: CBExploreADFLearnEmbeddings
+    class_name: CBExploreADFLearnEmbeddings
+    template_input: CSVReader
+    attributes:
+      random_seed: 42
+      actions:
+        [
+          provide_technical_diligence,
+          nurture_with_market_data,
+          escalate_to_specialist,
+          initiate_contract_sequence,
+          schedule_site_inspection,
+        ]
+      instruction_column: "summary"
+      true_action_column: "action"
+      root_dir: artifacts
+      save_path: cb_model-embeddings-summary-clean.vw
+      epochs: 10
+      train_test_split_params:
+        test_size: 0.2
+        shuffle: True
+        random_state: 42
+      vw_workspace_params:
+        exploration_method: epsilon
+        exploration_value: 0.3
+        adaptive: True
+        normalized: True
+        quiet: True
+        ngram_namespaces: []
+        quadratic_interactions: [":A"]

@@ -1,0 +1,66 @@
+agent:
+  name: generic_data_metrics
+
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: fetch_openmlWrapper_model
+  class_name: fetch_openmlWrapper
+  template_input: InputTemplate
+  attributes:
+    split_dataset: true
+    train_size: 0.8
+    fetch_openml:
+      data_id: 40981
+      data_home: null
+      target_column: "A15"
+      cache: true
+      return_X_y: false
+      as_frame: true
+      n_retries: 3
+      delay: 1.0
+      parser: "auto"
+      read_csv_kwargs:
+        dtype:
+          A15: int
+
+- template_name: XGBClassifierWrapper
+  class_name: XGBClassifierWrapper
+  template_input: fetch_openmlWrapper_model
+  attributes:
+    generic_field_key: "fetch_openmlWrapper_model"
+    model_save_path: "artifacts/models/model.xgb"
+    xgbclassifier_init:
+      max_depth: 5
+      learning_rate: 0.1
+      n_estimators: 100
+      objective: "binary:logistic"
+      booster: "gbtree"
+      tree_method: "auto"
+      n_jobs: -1
+      gamma: 0.1
+      min_child_weight: 1
+      subsample: 0.8
+      colsample_bytree: 0.8
+      scale_pos_weight: 1
+      random_state: 42
+      enable_categorical: true
+
+- template_name: ModelPredictionVisualization
+  class_name: PredictionVisualization
+  template_input: XGBClassifierWrapper
+  attributes:
+    generic_field_key: "XGBClassifierWrapper"
+    generic_training_key: "fetch_openmlWrapper_model"
+    target_column: "target"
+    fig_title: "Model Evaluation"
+    fig_width: 10
+    fig_height: 8
+    save_image_dir: "artifacts/visualizations/model_evaluation"
+    fig_name: "model"
+    add_to_image_packets: true
+    confusion_matrix: true
+    roc_curve: true
+    precision_recall_curve: true

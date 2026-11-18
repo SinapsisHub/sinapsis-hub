@@ -1,0 +1,139 @@
+[project]
+name = "sinapsis-diarization"
+description = "Speech processing templates and pipelines for transcription, speaker diarization, and emotion analysis"
+requires-python = ">=3.13"
+version = "1.0.0"
+authors = [
+    { name = "Ariel Ruiz-Garcia", email = "ariel@sinapsis.tech" },
+]
+maintainers = [
+    { name = "sinapsis", email = "dev@sinapsis.tech" },
+]
+license = "MIT OR Apache-2.0"
+license-files = ["LICENSE-MIT", "LICENSE-APACHE"]
+readme = "README.md"
+dependencies = [
+    "nemo-toolkit[asr,core,lightning]==2.6.2",
+    "nltk>=3.9.3",
+    "sacrebleu>=2.6.0",
+    "sinapsis>=1,<2",
+    "torchaudio==2.8.0",
+]
+
+
+[project.optional-dependencies]
+pyannote = [
+    "pyannote-audio>=4.0.4",
+    "torchcodec>=0.7.0,<0.8.0",
+]
+data-tools = [
+    "sinapsis-data-readers>=0.1.28",
+]
+all = [
+    "sinapsis-diarization[data-tools,dev,emotion,pyannote,whisperx]",
+]
+emotion = [
+    "ruamel-yaml==0.18.17",
+    "speechbrain",
+]
+whisperx = [
+    "onnx>=1.20.1",
+    "onnxruntime==1.23.2",
+    "whisperx>=3.8.0",
+]
+dev = [
+    "ty>=0.0.31",
+]
+
+
+[project.urls]
+Homepage = "https://sinapsis.tech"
+Documentation = "https://docs.sinapsis.tech/docs"
+Tutorials = "https://docs.sinapsis.tech/tutorials"
+Repository = "https://github.com/SinapsisHub/sinapsis-hub.git"
+
+
+[project.scripts]
+sinapsis-asr = "sinapsis_diarization.bin.sinapsis_asr:main"
+sinapsis-diarize = "sinapsis_diarization.bin.sinapsis_diarize:main"
+sinapsis-asr-diarize = "sinapsis_diarization.bin.sinapsis_asr_diarize:main"
+sinapsis-whisperx-asr-diarize = "sinapsis_diarization.bin.sinapsis_whisperx_asr_diarize:main"
+sinapsis-asr-diarize-emotion = "sinapsis_diarization.bin.sinapsis_asr_diarize_emotion:main"
+
+
+[[tool.uv.index]]
+name = "sinapsis-protected"
+url = "https://private.pypi.sinapsis.tech/"
+explicit = true
+
+
+[[tool.uv.index]]
+name = "sinapsis-private"
+url = "https://pypi.sinapsis.tech/"
+explicit = true
+
+
+[tool.uv.sources]
+sinapsis-diarization = { workspace = true }
+
+
+[tool.ruff]
+line-length = 120
+show-fixes = true
+
+
+[tool.ruff.lint]
+select = [
+    "ARG",
+    "ANN",
+    "BLE",
+    "C4",
+    "E",
+    "F",
+    "FIX",
+    "FLY",
+    "I",
+    "PERF",
+    "PIE",
+    "RUF",
+    "RSE",
+    "SIM",
+    "SLOT",
+    "T10",
+    "T20",
+    "TD",
+    "TID",
+]
+ignore = [
+    "ANN401",
+    "E501",   # trailing-comma
+]
+
+
+[tool.ruff.format]
+skip-magic-trailing-comma = true
+
+
+[tool.ty.environment]
+root = ["src"]
+
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.6.0",
+    "ruff>=0.15.12",
+    "ty>=0.0.32",
+]
+
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sinapsis_diarization"]
+
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+
+[tool.hatch.version]
+source = "vcs"

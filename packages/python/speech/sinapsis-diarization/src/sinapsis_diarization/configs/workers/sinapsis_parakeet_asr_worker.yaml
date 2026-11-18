@@ -1,0 +1,22 @@
+agent:
+  name: SinapsisParakeetASR_agent
+  description: "Agent with SinapsisParakeetASR."
+  attributes:
+    queue_name: SinapsisParakeetASR
+    templates_to_profile: "SinapsisParakeetASR"
+    description: "SinapsisParakeetASR worker"
+
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: SinapsisParakeetASR
+  class_name: SinapsisParakeetASR
+  template_input: InputTemplate
+  attributes:
+    model_name: nvidia/parakeet-tdt-0.6b-v2
+    device: cuda
+    sample_rate: 16000
+    chunk_size_in_secs: -1
+    search_window: 5.0

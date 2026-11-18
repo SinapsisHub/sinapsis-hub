@@ -1,0 +1,22 @@
+agent:
+  name: SinapsisSortformerDiarizer_agent
+  description: "Agent with SinapsisSortformerDiarizer."
+  attributes:
+    queue_name: SinapsisSortformerDiarizer
+    templates_to_profile: "SinapsisSortformerDiarizer"
+    description: "SinapsisSortformerDiarizer worker"
+
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: SinapsisSortformerDiarizer
+  class_name: SinapsisSortformerDiarizer
+  template_input: InputTemplate
+  attributes:
+    model_name: nvidia/diar_streaming_sortformer_4spk-v2.1
+    device: cuda
+    sample_rate: 16000
+    chunk_size_in_secs: -1
+    search_window: 5.0

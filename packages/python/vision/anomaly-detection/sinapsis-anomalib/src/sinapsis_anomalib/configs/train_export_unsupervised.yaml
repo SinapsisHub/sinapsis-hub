@@ -1,0 +1,46 @@
+agent:
+  name: anomalib_train_export
+  description: "Agent to train and export to Torch format a segmentation Cflow model."
+
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: CflowTrain
+  class_name: CflowTrain
+  template_input: InputTemplate
+  attributes:
+    folder_attributes:
+      name: "manufacturing_dataset"
+      root: "artifacts/unsupervised_data"
+      normal_dir: "normal"
+      #abnormal_dir: "anomaly" <- Notice that for unsupervised training we do not provide abnormal samples
+      #OPTIONAL: mask_dir: "masks" <- only needed for supervised training
+      extensions: [".jpg", ".png", ".JPG", ".PNG"]
+      train_batch_size: 16
+      eval_batch_size: 16
+      num_workers: 2
+      test_split_mode: "none"
+      test_split_ratio: 0.2
+      val_split_mode: "from_train"
+      val_split_ratio: 0.2
+      seed: 42
+    train_root: "train"
+    accelerator: "gpu"
+    trainer_args:
+      max_epochs: 5
+      devices: 1
+    cflow_init:
+      lr: 0.0001
+
+- template_name: CflowExport
+  class_name: CflowExport
+  template_input: CflowTrain
+  attributes:
+    generic_key_chkpt: CflowTrain
+    input_size: [512, 512]
+    export_type: "torch" # or "openvino"
+    export_root: "exported_models/unsupervised-set"
+    cflow_init:
+      lr: 0.0001

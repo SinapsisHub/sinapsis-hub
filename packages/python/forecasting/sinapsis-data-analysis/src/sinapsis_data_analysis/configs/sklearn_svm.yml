@@ -1,0 +1,41 @@
+agent:
+  name: sklearn_svm_models_agent
+  description: agent to train an SVC using the load_iris dataset
+
+templates:
+  - template_name: InputTemplate
+    class_name: InputTemplate
+    attributes: {}
+
+  - template_name: load_irisWrapper
+    class_name: load_irisWrapper
+    template_input: InputTemplate
+    attributes:
+      split_dataset: true
+      train_size: 0.8
+      load_iris:
+        return_X_y: false
+        as_frame: true
+
+  - template_name: SVCWrapper
+    class_name: SVCWrapper
+    template_input: load_irisWrapper
+    attributes:
+      generic_field_key: load_irisWrapper
+      model_save_path: "artifacts/svc_iris.joblib"
+      svc_init:
+        C: 1.0
+        kernel: "rbf"
+        degree: 3
+        gamma: "scale"
+        coef0: 0.0
+        shrinking: true
+        probability: false
+        tol: 0.001
+        cache_size: 200
+        class_weight: null
+        verbose: false
+        max_iter: -1
+        decision_function_shape: "ovr"
+        break_ties: false
+        random_state: 42

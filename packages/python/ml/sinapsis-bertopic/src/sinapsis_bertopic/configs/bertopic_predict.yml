@@ -1,0 +1,64 @@
+agent:
+  name: Bertopic-predict
+  description: Topic inference agent for mapping text to pretrained BERTopic models.
+  long_description: >
+    This agent performs semantic inference by mapping new text data onto a pretrained BERTopic model.
+    It leverages high-dimensional embeddings to categorize unstructured content—such as data on
+    Autonomous Vehicles—into established thematic clusters, ensuring consistent classification without
+    the need for additional training.
+
+templates:
+  - template_name: InputTemplate
+    class_name: InputTemplate
+    attributes: {}
+
+  - template_name: PyPDFLoaderWrapper_70780
+    class_name: WikipediaLoaderWrapper
+    template_input: InputTemplate
+    attributes:
+      add_document_as_text_packet: true
+      wikipedialoader_init:
+        query: foreign exchange mechanics and currency markets
+        lang: en
+        load_max_docs: 1
+        load_all_available_meta: false
+        doc_content_chars_max: 4000
+
+  - template_name: PyPDFLoaderWrapper_70781
+    class_name: WikipediaLoaderWrapper
+    template_input: PyPDFLoaderWrapper_70780
+    attributes:
+      add_document_as_text_packet: true
+      wikipedialoader_init:
+        query: trading strategies & market dynamics
+        lang: en
+        load_max_docs: 1
+        load_all_available_meta: false
+        doc_content_chars_max: 4000
+
+  - template_name: PyPDFLoaderWrapper_70782
+    class_name: WikipediaLoaderWrapper
+    template_input: PyPDFLoaderWrapper_70781
+    attributes:
+      add_document_as_text_packet: true
+      wikipedialoader_init:
+        query: fintech trends and innovations
+        lang: en
+        load_max_docs: 1
+        load_all_available_meta: false
+        doc_content_chars_max: 4000
+
+
+
+  - template_name: BERTopic
+    template_input: PyPDFLoaderWrapper_70782
+    class_name: BERTopicPredict
+    attributes:
+      root_dir: "artifacts"
+      prediction_viz_path: "bertopic_prediction_visualization.html"
+      bertopic_model_params:
+        calculates_probabilities: true
+      visualize_predictions: true
+      historical_data_path: "artifacts/training_data.pkl" # Path to historical data used for visualization
+      #model_path: "MaartenGr/BERTopic_Wikipedia" # Points to model stored in HF Hub
+      model_path: "artifacts/bert_model_finance-5" # Points to local saved model

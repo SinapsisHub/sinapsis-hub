@@ -1,0 +1,108 @@
+agent:
+  name: credit_risk_analysis
+
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: fetch_openmlWrapper_model
+  class_name: fetch_openmlWrapper
+  template_input: InputTemplate
+  attributes:
+    split_dataset: true
+    train_size: 0.8
+    fetch_openml:
+      data_id: 45577
+      data_home: null
+      target_column: "SeriousDlqin2yrs"
+      cache: true
+      return_X_y: false
+      as_frame: true
+      n_retries: 3
+      delay: 1.0
+      parser: "pandas"
+      read_csv_kwargs:
+        dtype:
+          SeriousDlqin2yrs: "category"
+          RevolvingUtilizationOfUnsecuredLines: "float64"
+          age: "Int64"
+          NumberOfTime30-59DaysPastDueNotWorse: "Int64"
+          DebtRatio: "float64"
+          MonthlyIncome: "float64"
+          NumberOfOpenCreditLinesAndLoans: "Int64"
+          NumberOfTimes90DaysLate: "Int64"
+          NumberRealEstateLoansOrLines: "Int64"
+          NumberOfTime60-89DaysPastDueNotWorse: "Int64"
+          NumberOfDependents: "Int64"
+
+- template_name: fetch_openmlWrapper_viz
+  class_name: fetch_openmlWrapper
+  template_input: InputTemplate
+  attributes:
+    split_dataset: false
+    train_size: 1.0
+    fetch_openml:
+      data_id: 45577
+      data_home: null
+      target_column: "SeriousDlqin2yrs"
+      cache: true
+      return_X_y: false
+      as_frame: true
+      n_retries: 3
+      delay: 1.0
+      parser: "pandas"
+      read_csv_kwargs:
+        dtype:
+          SeriousDlqin2yrs: "category"
+          RevolvingUtilizationOfUnsecuredLines: "float64"
+          age: "Int64"
+          NumberOfTime30-59DaysPastDueNotWorse: "Int64"
+          DebtRatio: "float64"
+          MonthlyIncome: "float64"
+          NumberOfOpenCreditLinesAndLoans: "Int64"
+          NumberOfTimes90DaysLate: "Int64"
+          NumberRealEstateLoansOrLines: "Int64"
+          NumberOfTime60-89DaysPastDueNotWorse: "Int64"
+          NumberOfDependents: "Int64"
+
+- template_name: TabularDataVisualization
+  class_name: TabularDataVisualization
+  template_input: fetch_openmlWrapper_viz
+  attributes:
+    generic_field_key: "fetch_openmlWrapper_viz"
+    target_column: "target"
+    fig_title: "Credit Risk Analysis - Give Me Some Credit"
+    y_label: "Frequency"
+    x_label: "Value"
+    fig_width: 12
+    fig_height: 8
+    save_image_dir: "artifacts/visualizations"
+    fig_name: "give_me_some_credit"
+    histogram: true
+    box_plot: true
+    correlation: true
+    categorical_dist: true
+    pie_chart: true
+
+- template_name: XGBClassifierWrapper
+  class_name: XGBClassifierWrapper
+  template_input: fetch_openmlWrapper_model
+  attributes:
+    generic_field_key: "fetch_openmlWrapper_model"
+    model_save_path: "artifacts/models/credit_risk_model.xgb"
+    xgbclassifier_init:
+      max_depth: 5
+      learning_rate: 0.1
+      n_estimators: 100
+      objective: "binary:logistic"
+      booster: "gbtree"
+      tree_method: "auto"
+      n_jobs: -1
+      gamma: 0.1
+      min_child_weight: 1
+      subsample: 0.8
+      colsample_bytree: 0.8
+      scale_pos_weight: 1
+      random_state: 42
+      enable_categorical: true

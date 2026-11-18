@@ -1,0 +1,46 @@
+agent:
+  name: australian_credit_visualization
+
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: fetch_openmlWrapper
+  class_name: fetch_openmlWrapper
+  template_input: InputTemplate
+  attributes:
+    split_dataset: false
+    train_size: 0.8
+    fetch_openml:
+      data_id: 40981
+      data_home: null
+      target_column: "A15"
+      cache: true
+      return_X_y: false
+      as_frame: true
+      n_retries: 3
+      delay: 1.0
+      parser: "auto"
+      read_csv_kwargs:
+        dtype:
+          A15: int
+
+- template_name: TabularDataVisualization
+  class_name: TabularDataVisualization
+  template_input: fetch_openmlWrapper
+  attributes:
+    generic_field_key: "fetch_openmlWrapper"
+    target_column: "target"
+    fig_title: "Credit Risk Analysis"
+    y_label: "Frecuencia"
+    x_label: "Valor"
+    fig_width: 12
+    fig_height: 8
+    save_image_dir: "artifacts/australian_credit"
+    fig_name: "credit_visualization"
+    pie_chart: true
+    histogram: true
+    box_plot: true
+    correlation: true
+    categorical_dist: true

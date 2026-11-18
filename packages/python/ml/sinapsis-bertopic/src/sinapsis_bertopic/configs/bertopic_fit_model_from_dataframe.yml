@@ -1,0 +1,40 @@
+agent:
+  name: Bertopic-fit-model
+  description: Multi-topic Wikipedia data aggregator and BERTopic topic modeling agent.
+  long_description: >
+    This agent sequentially aggregates Wikipedia content across diverse themes—including GenAI, history, and tech—to perform automated thematic discovery.
+    By funneling these datasets into a BERTopic model, it identifies latent semantic patterns and clusters, ultimately serializing the trained model for structured analysis.
+
+templates:
+  - template_name: InputTemplate
+    class_name: InputTemplate
+    attributes: {}
+
+  - template_name: CSVReader
+    class_name: CSVDatasetReader
+    template_input: InputTemplate
+    attributes:
+      root_dir: .
+      path_to_csv: summary_dataset.csv
+
+  - template_name: BERTopicFitModel
+    template_input: CSVReader
+    class_name: BERTopicFitModelFromDataFrame
+    attributes:
+      hdbscan_model_params:
+        metric: manhattan
+        algorithm: best
+
+      columns_to_use: ["summary"]
+      bertopic_model_params:
+        calculates_probabilities: true
+        min_topic_size: 5
+      export_visualization_to_image: true
+      root_dir: "artifacts"
+      prediction_viz_path: "bertopic_prediction_visualization.html"
+      save_training_data: true
+      save_training_data_path: "training_data-v2.pkl"
+      save_vizualization_path: "finance_visualization-v2.html"
+      save_model_path: "bert_model_finance-v2"
+      bertopic_save_params:
+        serialization: safetensors

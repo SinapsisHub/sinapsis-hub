@@ -1,0 +1,19 @@
+agent:
+  name: parakeet_sortformer_speechbrain
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+- template_name: SortformerEmotionTranscription
+  class_name: SortformerEmotionTranscription
+  template_input: InputTemplate
+  attributes:
+    root_dir: .
+    audio_file_path: test_conversation.wav
+    asr_model_name: nvidia/parakeet-tdt-0.6b-v2
+    diarization_model_name: nvidia/diar_streaming_sortformer_4spk-v2.1
+    device: cpu
+    sample_rate: 16000
+    chunk_size_in_secs: 10
+    min_emotion_confidence: 0.5
+    emotion_chunk_secs: 60.0

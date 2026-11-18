@@ -1,0 +1,99 @@
+agent:
+  name: speed_calculation
+  attributes:
+    agent_mode: generator
+
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: Video
+  class_name: VideoReaderCV2
+  template_input: InputTemplate
+  attributes:
+    root_dir: path to root dir
+    video_file_path: path to video
+    batch_size: 1
+    device: gpu
+    loop_forever: true
+
+
+- template_name: Inference
+  class_name: RFDETRInference
+  template_input: Video
+  attributes:
+    model_params:
+      encoder: dinov2_windowed_small
+      num_classes: 90
+      pretrain_weights: rf-detr-base.pth
+      device: cuda
+      resolution: 560
+    threshold: 0.6
+
+- template_name: Filter
+  class_name: ClassFilter
+  template_input: Inference
+  attributes: {}
+
+
+- template_name: Track
+  class_name: ByteTrack
+  template_input: Filter
+  attributes:
+    track_activation_threshold: 0.2
+    minimum_matching_threshold: 0.5
+    minimum_consecutive_frames: 1
+    frame_rate: 25
+
+- template_name: Transform
+  class_name: DetectionPerspectiveTransform
+  template_input: Track
+  attributes:
+    source_points: [[806, 291], [1237, 291], [1562, 931], [325, 920]]
+    filter_detections_roi: false
+
+- template_name: Speed
+  class_name: ObjectSpeedCalculation
+  template_input: Transform
+  attributes:
+    fps: 25
+    meters_per_pixel: 0.06
+    speed_limit: 20
+
+- template_name: License
+  class_name: FastALPR
+  template_input: Speed
+  attributes:
+    detector_model: yolo-v9-s-608-license-plate-end2end
+    ocr_model: cct-xs-v1-global-model
+    detection_treshold: 0.6
+    ocr_threshold: 0.6
+
+- template_name: Drawer
+  class_name: BBoxDrawer
+  template_input: License
+  attributes:
+    overwrite: true
+    randomized_color: false
+    draw_confidence: true
+    draw_extra_labels: true
+    text_style:
+      font: 0
+      font_scale: 0.5
+      thickness: 2
+    draw_classification_label: true
+    classification_label_position: top_right
+    text_box_to_border_offset: 0.01
+
+- template_name: VideoWriterCV2
+  class_name: VideoWriterCV2
+  template_input: Drawer
+  attributes:
+    root_dir: .
+    destination_path: results/video.mp4
+    height: -1
+    width: -1
+    fps: 25
+    codec: mp4v
+    save_image_batch: false

@@ -1,0 +1,36 @@
+agent:
+  name: anomalib_train
+  description: "Agent to perform Cflow model training."
+  attributes:
+    queue_name: CflowTrain
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: CflowTrain
+  class_name: CflowTrain
+  template_input: InputTemplate
+  attributes:
+    folder_attributes:
+      name: "concrete_crack"
+      root: "artifacts/data/train_data"
+      normal_dir: "images/normal"
+      abnormal_dir: "images/anomaly"
+      #OPTIONAL: mask_dir: "Masks/Anomaly"
+      extensions: [".jpg", ".png", ".JPG", ".PNG"]
+      train_batch_size: 4
+      eval_batch_size: 4
+      num_workers: 2
+      test_split_mode: "from_dir"
+      test_split_ratio: 0.2
+      val_split_mode: "from_test"
+      val_split_ratio: 0.5
+      seed: 42
+    train_root: "train"
+    trainer_args:
+      devices: [0]
+      max_epochs: 5
+      accelerator: gpu
+    cflow_init:
+      lr: 0.0001

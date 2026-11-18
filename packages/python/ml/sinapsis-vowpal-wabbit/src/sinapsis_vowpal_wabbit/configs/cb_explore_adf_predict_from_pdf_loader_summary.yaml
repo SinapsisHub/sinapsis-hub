@@ -1,0 +1,98 @@
+agent:
+  name: sentiment-with-pdf
+
+templates:
+  - template_name: InputTemplate
+    class_name: InputTemplate
+    attributes: {}
+
+  - template_name: PyPDFLoaderWrapper_70780
+    class_name: PyPDFLoaderWrapper
+    template_input: InputTemplate
+    attributes:
+      pypdfloader_init:
+        mode: single
+        file_path: "file.pdf"
+        extract_images: false
+        extraction_mode: plain
+        pages_delimiter: "\n\f"
+        extraction_kwargs: { }
+        images_inner_format: text
+      add_document_as_text_packet: True
+
+  - template_name: LLaMATextCompletion_25260
+    class_name: LLaMATextCompletion
+    template_input: PyPDFLoaderWrapper_70780
+    attributes:
+      pattern: </think>
+      init_args:
+        seed: 10
+        n_ctx: 4096
+        n_batch: 256
+        verbose: true
+        n_ubatch: 256
+        use_mmap: true
+        n_threads: 8
+        use_mlock: false
+        flash_attn: false
+        chat_format: qwen
+        n_gpu_layers: 14
+        llm_model_file: Qwen3-8B-Q4_K_M.gguf
+        llm_model_name: unsloth/Qwen3-8B-GGUF
+        n_threads_batch: 4
+      is_enabled: true
+      keep_before: false
+      system_prompt: |-
+        **Role:** You are an expert Communication Analyst specializing in distilling complex verbal dialogues into concise business intelligence.
+
+        **Task:** Analyze the provided call transcription between two participants. Your goal is to extract the core essence of the conversation while filtering out "noise" (filler words, small talk, and repetitive acknowledgments).
+
+        **Output Requirements:**
+        1. **Main Summary:** A 2-3 sentence overview describing the primary purpose of the call and the ultimate outcome or resolution.
+        2. **Top 3 Key Points:** A bulleted list of the most critical takeaways, such as specific decisions made, technical issues identified, or next steps agreed upon.
+
+        **Constraints:**
+        - Maintain an objective, professional tone.
+        - Distinguish clearly between the participants' perspectives if they disagree.
+        - If a specific action item was mentioned, include it in the key points.
+        - If the transcription is unclear or cut off, summarize based on the available context without inventing details.
+      completion_args:
+        seed: 24
+        stop: None
+        min_p: 0.05
+        top_k: 40
+        top_p: 0.95
+        logit_bias: {}
+        max_tokens: 8192
+        temperature: 0.2
+        repeat_penalty: 1
+        presence_penalty: 0
+        frequency_penalty: 0
+      rag_context_key: None
+      chat_history_key: None
+    template_type: 3
+
+  - template_name: CBExploreADFPredict
+    class_name: CBExploreADFPredictEmbeddings
+    template_input: LLaMATextCompletion_25260
+    attributes:
+      random_seed: 42
+      actions:
+        [
+          "contact_customer_service",
+          "schedule_follow_up_meeting",
+          "send_email_with_product_information",
+          "register_new_client",
+          "provide_financing_options",
+        ]
+      model_path: artifacts/cb_model-embeddings-quadratic.vw
+      threshold: 0
+      remove_special_characters: True
+
+      vw_workspace_params:
+        exploration_method: epsilon
+        exploration_value: 0.3
+        adaptive: True
+        normalized: True
+        quiet: True
+        quadratic_interactions: [":A"]

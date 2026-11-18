@@ -1,0 +1,30 @@
+agent:
+  name: Bertopic-fit-model
+  description: Agent to fit a BERTopic model.
+  long_description: >
+    This agent is responsible for fitting a BERTopic model to the provided data.
+    It takes in the necessary parameters and configurations to train the model effectively.
+    The agent will handle the entire process of training, including saving the trained model,
+    visualizations, and training data for future reference.
+  queue_name: BERTopicFitModel
+
+templates:
+  - template_name: InputTemplate
+    class_name: InputTemplate
+    attributes: {}
+
+  - template_name: BERTopicFitModel
+    template_input: InputTemplate
+    class_name: BERTopicFitModel
+    attributes:
+      root_dir: "artifacts/worker"
+      bertopic_model_params:
+        calculates_probabilities: true
+        min_topic_size: 5
+      export_visualization_to_image: true
+      save_training_data: true
+      save_training_data_path: "training_data-v2.pkl"
+      save_vizualization_path: "finance_visualization-v2.html"
+      save_model_path: "bert_model_finance-v2"
+      bertopic_save_params:
+        serialization: pytorch

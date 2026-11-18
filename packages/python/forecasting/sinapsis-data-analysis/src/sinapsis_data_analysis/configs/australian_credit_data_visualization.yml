@@ -1,0 +1,46 @@
+agent:
+  name: generic_data_visualization
+
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: fetch_openmlWrapper_viz
+  class_name: fetch_openmlWrapper
+  template_input: InputTemplate
+  attributes:
+    split_dataset: false
+    train_size: 1.0
+    fetch_openml:
+      data_id: 40981
+      data_home: null
+      target_column: "A15"
+      cache: true
+      return_X_y: false
+      as_frame: true
+      n_retries: 3
+      delay: 1.0
+      parser: "auto"
+      read_csv_kwargs:
+        dtype:
+          A15: int
+
+- template_name: TabularDataVisualization
+  class_name: TabularDataVisualization
+  template_input: fetch_openmlWrapper_viz
+  attributes:
+    generic_field_key: "fetch_openmlWrapper_viz"
+    target_column: "target"
+    fig_title: "Data Visualization"
+    y_label: "Frequency"
+    x_label: "Value"
+    fig_width: 12
+    fig_height: 8
+    save_image_dir: "artifacts/visualizations"
+    fig_name: "dataset"
+    histogram: true
+    box_plot: true
+    correlation: true
+    categorical_dist: true
+    pie_chart: true

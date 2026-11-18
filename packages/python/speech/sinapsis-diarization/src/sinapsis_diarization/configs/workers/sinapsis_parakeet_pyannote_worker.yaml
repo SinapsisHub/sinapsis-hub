@@ -1,0 +1,22 @@
+agent:
+  name: PyannoteDiarizedTranscription_agent
+  description: "Agent with PyannoteDiarizedTranscription."
+  attributes:
+    queue_name: PyannoteDiarizedTranscription
+    templates_to_profile: "PyannoteDiarizedTranscription"
+    description: "PyannoteDiarizedTranscription worker"
+
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: PyannoteDiarizedTranscription
+  class_name: PyannoteDiarizedTranscription
+  template_input: InputTemplate
+  attributes:
+    device: cuda
+    sample_rate: 16000
+    chunk_size_in_secs: -1
+    search_window: 5.0
+    num_speakers: 2

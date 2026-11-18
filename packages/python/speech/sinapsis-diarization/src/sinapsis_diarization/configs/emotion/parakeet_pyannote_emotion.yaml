@@ -1,0 +1,21 @@
+agent:
+  name: my_test_agent
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+- template_name: PyannoteEmotionTranscription
+  class_name: PyannoteEmotionTranscription
+  template_input: InputTemplate
+  attributes:
+    root_dir: .
+    audio_file_path: test_conversation.wav
+    asr_model_name: nvidia/parakeet-tdt-0.6b-v2
+    diarization_model_name: pyannote/speaker-diarization-community-1
+    device: cpu
+    sample_rate: 16000
+    chunk_size_in_secs: 10
+    search_window: 5.0
+    num_speakers: 2
+    min_emotion_confidence: 0.5
+    emotion_chunk_secs: 60.0
