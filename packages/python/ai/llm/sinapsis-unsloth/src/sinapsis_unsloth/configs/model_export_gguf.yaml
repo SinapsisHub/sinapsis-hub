@@ -1,0 +1,22 @@
+agent:
+  name: model_export_agent
+  description: Agent to handle model export and conversion workflows
+
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+- template_name: UnslothExportGGUF
+  class_name: UnslothExportGGUF
+  template_input: InputTemplate
+  attributes:
+    model_args:
+      model_name: unsloth/DeepSeek-R1-Distill-Qwen-1.5B
+      dtype: "bfloat16"
+      load_in_4bit: false
+      gpu_memory_utilization: 1
+    export_args:
+      save_path : artifacts/DeepSeek-R1-Distill-Qwen-1.5B-gguf
+      maximum_memory_usage: 1
+      quantization_method: not_quantized
+    push_to_hub: false

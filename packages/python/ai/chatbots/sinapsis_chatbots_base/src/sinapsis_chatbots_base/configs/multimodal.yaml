@@ -1,0 +1,35 @@
+agent:
+  name: endpoint_multimodal_agent
+  description: Demonstrates image-to-text generation with a vLLM OpenAI-compatible endpoint.
+
+templates:
+  - template_name: InputTemplate
+    class_name: InputTemplate
+    attributes: {}
+
+  - template_name: FolderImageDatasetCV2
+    class_name: FolderImageDatasetCV2
+    template_input: InputTemplate
+    attributes:
+      load_on_init: True
+      root_dir: "."
+      data_dir: "artifacts"
+      pattern: "test.png"
+
+  - template_name: LLMConversationInput
+    class_name: LLMConversationInput
+    template_input: FolderImageDatasetCV2
+    attributes:
+      prompt: "Describe what you see in the image."
+      system_prompt: "You are a helpful vision-language assistant."
+
+  - template_name: EndpointLLMMultiModal
+    class_name: EndpointLLMMultiModal
+    template_input: LLMConversationInput
+    attributes:
+      init_args:
+        base_url: "http://127.0.0.1:8000/v1"
+        llm_model_name: "Qwen/Qwen3.5-4B"
+      completion_args:
+        max_tokens: 2048
+        temperature: 0.2

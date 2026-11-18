@@ -1,0 +1,66 @@
+agent:
+  name: ollama_agent
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: LLMConversationInput
+  class_name: LLMConversationInput
+  template_input: InputTemplate
+  attributes:
+    prompt: Please insert all records to a table named test_qwen
+    system_prompt: |
+      You are the Supabase Database Assistant. Your sole purpose is to translate natural language requests into precise SQL queries or Supabase API calls to manage data within the provided schema.
+      - [] in a tool result means SUCCESS. Always proceed to the next step immediately.
+      - Never show SQL in text. Always use tools directly.
+
+- template_name: IterativeWorkflow
+  class_name: AsyncWhileLoop
+  template_input: LLMConversationInput
+  attributes:
+    reuse_container: true
+    lazy_agent: false
+    agent_definition:
+      agent:
+        name: mcp_iteration_agent
+      templates:
+        - template_name: InputTemplate
+          class_name: InputTemplate
+          attributes: { }
+
+        - template_name: SupabaseMCPClient
+          class_name: SupabaseMCPClient
+          template_input: InputTemplate
+          attributes:
+            server:
+              name: supabase
+              command: npx
+              args:
+                - -y
+                - '@supabase/mcp-server-supabase@latest'
+                - --project-ref=<project-ref>
+              env:
+                SUPABASE_ACCESS_TOKEN: <token>
+              timeout: 30
+              default_args: [ ]
+            list_tables:
+              execute: true
+            list_migrations:
+              execute: true
+            execute_sql:
+              execute: true
+            apply_migration:
+              execute: true
+
+        - template_name: EndpointLLMCompletion
+          class_name: EndpointLLMCompletionWithMCP
+          template_input: SupabaseMCPClient
+          attributes:
+            max_tool_retries: 5
+            init_args:
+              base_url: "http://127.0.0.1:11434/v1"
+              llm_model_name: "qwen2.5:7b"
+            completion_args:
+              temperature: 0.7
+              max_tokens: 2048

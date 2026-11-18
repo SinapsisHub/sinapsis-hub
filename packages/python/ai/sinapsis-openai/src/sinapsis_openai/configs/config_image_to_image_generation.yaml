@@ -1,0 +1,50 @@
+agent:
+  name: image_edition_agent
+  description: "OpenAI Image Edition with Mask"
+
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: FolderImageDatasetCV2
+  class_name: FolderImageDatasetCV2
+  template_input: InputTemplate
+  attributes:
+    data_dir: data_dir
+    pattern: '**/*'
+    batch_size: 5
+    shuffle_data: false
+    samples_to_load: -1
+    load_on_init: false
+    label_path_index: -2
+    is_ground_truth: false
+
+
+
+- template_name: TextInput
+  class_name: TextInput
+  template_input: FolderImageDatasetCV2
+  attributes:
+    text: Create a photorealistic image of a city using the elements contained in the provided reference images.
+
+- template_name: OpenAIImageEdition
+  class_name: OpenAIImageToImageGenerationWrapper
+  template_input: TextInput
+  attributes:
+    model: gpt-image-1
+    response_format: "b64_json"
+    openai_init: {}
+    edit:
+      n: 1
+
+- template_name: ImageSaver
+  class_name: ImageSaver
+  template_input: OpenAIImageEdition
+  attributes:
+    save_dir: 'OAI_image_generation_results/'
+    extension: jpg
+    save_full_image: true
+    save_bbox_crops: false
+    save_mask_crops: false
+    min_bbox_dim: 5

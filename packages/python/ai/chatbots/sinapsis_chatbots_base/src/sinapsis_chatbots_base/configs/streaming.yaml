@@ -1,0 +1,27 @@
+agent:
+  name: endpoint_streaming_agent
+  description: Demonstrates streaming text generation with a vLLM OpenAI-compatible endpoint.
+
+templates:
+  - template_name: InputTemplate
+    class_name: InputTemplate
+    attributes: {}
+
+  - template_name: LLMConversationInput
+    class_name: LLMConversationInput
+    template_input: InputTemplate
+    attributes:
+      prompt: "Give three short tips for staying organized during a busy week."
+      system_prompt: "You are a helpful assistant."
+
+  - template_name: EndpointLLMStreamingCompletion
+    class_name: EndpointLLMStreamingCompletion
+    template_input: LLMConversationInput
+    attributes:
+      init_args:
+        base_url: "http://127.0.0.1:8000/v1"
+        llm_model_name: "Qwen/Qwen3-4B-Thinking-2507"
+      completion_args:
+        max_tokens: 1024
+        temperature: 0.7
+        top_p: 0.8

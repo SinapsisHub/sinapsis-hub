@@ -1,0 +1,52 @@
+# -*- coding: utf-8 -*-
+from typing import Any, cast
+
+from langchain_community.document_loaders.blob_loaders import Blob
+from langchain_core.documents.base import Document
+from sinapsis.data_transport import DataContainer, TextPacket
+from sinapsis.template import OutputTypes, Template, UIPropertiesMetadata
+
+from sinapsis_langchain_readers.helpers.tags import Tags
+
+
+class BaseStaticLoader(Template):
+    """Base class for Loaders that can't be constructed dynamically"""
+
+    UIProperties = UIPropertiesMetadata(
+        category="LangChain",
+        output_type=OutputTypes.TEXT,
+        tags=cast(
+            list[str],
+            [
+                Tags.DOCUMENTS,
+                Tags.DOCUMENT_LOADING,
+                Tags.DYNAMIC,
+                Tags.FILES,
+                Tags.LANGCHAIN,
+                Tags.LOADERS,
+                Tags.READERS,
+            ],
+        ),
+    )
+    loader: Any
+
+    @staticmethod
+    def append_documents_as_text_packet(container: DataContainer, documents: list[Document | Blob]) -> None:
+        """Method to append each string of the Document or list[Documents] to a new TextPacket
+        Args:
+            container (DataContainer) : Container to store the TextPackets
+            documents (list[Document]) : list of documents to split and append to TextPacket
+        """
+        for document in documents:
+            document = cast(Document, document)
+            text_packet = TextPacket(content=document.page_content)
+            container.texts.append(text_packet)
+
+    def execute(self, container: DataContainer) -> DataContainer:
+        documents = self.loader.load()
+        if documents:
+            if getattr(self.attributes, "add_document_as_text_packet", None) is not None:
+                self.append_documents_as_text_packet(container, documents)
+            else:
+                self._set_generic_data(container, documents)
+        return container

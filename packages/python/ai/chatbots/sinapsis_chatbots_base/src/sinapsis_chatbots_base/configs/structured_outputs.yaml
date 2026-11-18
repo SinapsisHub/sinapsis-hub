@@ -1,0 +1,133 @@
+agent:
+  name: structured_person_extraction
+  description: Extracts structured person data from unstructured text using JSON schema validation with nested objects and arrays.
+
+templates:
+  - template_name: InputTemplate
+    class_name: InputTemplate
+    attributes: {}
+
+  - template_name: LLMConversationInput
+    class_name: LLMConversationInput
+    template_input: InputTemplate
+    attributes:
+      prompt: prompts/structured_outputs_prompt.txt
+      system_prompt: "You are a structured data extraction assistant. Extract the requested information from the provided text and return it as valid JSON matching the specified schema."
+
+  - template_name: EndpointLLMCompletion
+    class_name: EndpointLLMCompletion
+    template_input: LLMConversationInput
+    attributes:
+      init_args:
+        base_url: "http://127.0.0.1:11434/v1"
+        llm_model_name: "qwen3.5:2b"
+      completion_args:
+        max_tokens: 4096
+        temperature: 0.2
+        response_format:
+          type: json_object
+          schema:
+            additionalProperties: false
+            properties:
+              first_name:
+                type: string
+                description: "Given/first name of the person."
+              last_name:
+                type: string
+                description: "Family name. Use 'unknown' if not mentioned."
+              birth_info:
+                type: object
+                description: "Birth information including date and location."
+                additionalProperties: false
+                properties:
+                  date:
+                    type: string
+                    description: "Date of birth in YYYY-MM-DD format. Default unknown day to 01."
+                  location:
+                    type: string
+                    description: "City or country where the person was born. Use 'unknown' if not mentioned."
+                required:
+                  - date
+                  - location
+              current_location:
+                type: object
+                description: "Current residence information."
+                properties:
+                  city:
+                    type: string
+                    description: "Current city of residence."
+                  country:
+                    type: string
+                    description: "Current country of residence."
+                required:
+                  - city
+                  - country
+              employment:
+                type: object
+                description: "Employment and work history information."
+                additionalProperties: false
+                properties:
+                  status:
+                    type: string
+                    description: "Current employment situation."
+                    enum:
+                      - "employed"
+                      - "unemployed"
+                      - "freelance"
+                      - "student"
+                      - "retired"
+                      - "unknown"
+                  previous_roles:
+                    type: array
+                    description: "List of previous job titles or roles mentioned."
+                    items:
+                      type: object
+                      additionalProperties: false
+                      properties:
+                        title:
+                          type: string
+                          description: "Job title or role."
+                        company:
+                          type: string
+                          description: "Company or organization name. Use 'unknown' if not mentioned."
+                        duration_years:
+                          type: integer
+                          description: "Approximate duration in years. Use 0 if unknown."
+                      required:
+                        - title
+                        - company
+                        - duration_years
+                  current_break_months:
+                    type: integer
+                    description: "Number of months since last employment, if on a break."
+                required:
+                  - status
+                  - previous_roles
+              contact:
+                type: object
+                description: "Contact information."
+                properties:
+                  email:
+                    type: string
+                    description: "Email address if mentioned."
+                  phone:
+                    type: string
+                    description: "Phone number if mentioned."
+                  website:
+                    type: string
+                    description: "Personal website or portfolio URL if mentioned."
+                required:
+                  - email
+              skills:
+                type: array
+                description: "List of skills or areas of expertise mentioned."
+                items:
+                  type: string
+            required:
+              - first_name
+              - last_name
+              - birth_info
+              - current_location
+              - employment
+              - contact
+              - skills

@@ -1,0 +1,14 @@
+agent:
+  name: stable_diffusion_agent_downloader
+
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: HuggingFaceDownloader
+  class_name: HuggingFaceDownloader
+  template_input: InputTemplate
+  attributes:
+    repo_id: stable-diffusion-v1-5/stable-diffusion-v1-5
+    max_workers: 4

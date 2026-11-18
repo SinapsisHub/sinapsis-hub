@@ -1,0 +1,24 @@
+agent:
+  name: google_docs_loader
+  description: "Google Drive Loader example"
+
+templates:
+
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: LangChainGoogleDriveLoader
+  class_name: LangChainGoogleDriveLoader
+  template_input: InputTemplate
+  attributes:
+    add_document_as_text_packet: true
+    credentials_path: /path/to/credentials.json
+    token_path: /path/to/token.json
+    folder_id: folder id
+    file_loader_kwargs: {}
+    scopes: [
+      "https://www.googleapis.com/auth/drive.readonly",
+      "https://www.googleapis.com/auth/drive.metadata.readonly",
+      ]
+    load_extended_metadata: true

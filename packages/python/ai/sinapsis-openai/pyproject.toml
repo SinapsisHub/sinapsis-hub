@@ -1,0 +1,126 @@
+[project]
+name = "sinapsis-openai"
+description = "sinapsis module to handle OpenAI modules for chat completion, image edition and creation, audio generation, among other tasks"
+requires-python = ">=3.13"
+version = "1.0.0"
+authors = [
+    { name = "Ariel Ruiz-Garcia", email = "ariel@sinapsis.tech" },
+]
+maintainers = [
+    { name = "sinapsis", email = "dev@sinapsis.tech" },
+]
+license = "MIT OR Apache-2.0"
+license-files = ["LICENSE-MIT", "LICENSE-APACHE"]
+readme = "README.md"
+dependencies = [
+    "openai>=2.11.0",
+    "opencv-python>=4.11.0.86",
+    "sinapsis>=1,<2",
+]
+
+
+[project.optional-dependencies]
+webapp-gradio = [
+    "sinapsis[webapp]>=0.2.7",
+]
+data-readers = [
+    "sinapsis-data-readers>=0.1.0",
+]
+all = ["sinapsis-openai[webapp-gradio]", "sinapsis-openai[data-readers]", "sinapsis-openai[audio-generation]",
+    "sinapsis-openai[image-generation]", "sinapsis-openai[encode-results]", "sinapsis-openai[encode-results]"]
+audio-generation = [
+    "pydub>=0.25.1",
+    "sinapsis-openai[encode-results]",
+]
+image-generation = [
+    "numpy==1.26.4",
+    "pillow>=11.3.0",
+    "sinapsis-openai[encode-results]",
+]
+encode-results = [
+    "sinapsis-generic-data-tools>=0.1.8",
+]
+data-writers = [
+    "sinapsis-data-writers>=0.1.16",
+]
+
+
+[project.urls]
+Homepage = "https://sinapsis.tech"
+Documentation = "https://docs.sinapsis.tech/docs"
+Tutorials = "https://docs.sinapsis.tech/tutorials"
+Repository = "https://github.com/SinapsisHub/sinapsis-hub.git"
+
+
+[[tool.uv.index]]
+name = "sinapsis-protected"
+url = "https://private.pypi.sinapsis.tech/"
+explicit = true
+
+
+[[tool.uv.index]]
+name = "sinapsis-private"
+url = "https://pypi.sinapsis.tech/"
+explicit = true
+
+
+[tool.uv.sources]
+sinapsis-openai = { workspace = true }
+
+
+[tool.ruff]
+line-length = 120
+show-fixes = true
+
+
+[tool.ruff.lint]
+select = [
+    "ARG",
+    "ANN",
+    "BLE",
+    "C4",
+    "E",
+    "F",
+    "FIX",
+    "FLY",
+    "I",
+    "PERF",
+    "PIE",
+    "RUF",
+    "RSE",
+    "SIM",
+    "SLOT",
+    "T10",
+    "T20",
+    "TD",
+    "TID",
+]
+ignore = [
+    "ANN401",
+    "E501",   # trailing-comma
+]
+
+
+[tool.ruff.format]
+skip-magic-trailing-comma = true
+
+
+[dependency-groups]
+dev = [
+    "ruff>=0.8.3",
+    "pre-commit>=4.0.1",
+    "ty>=0.0.32",
+]
+
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sinapsis_openai"]
+
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+
+[tool.hatch.version]
+source = "vcs"

@@ -1,0 +1,41 @@
+agent:
+  name: my_test_agent
+
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: TextInput
+  class_name: TextInput
+  template_input: InputTemplate
+  attributes:
+    text: "How do you say `orange` in spanish?"
+
+- template_name: UnslothInferenceReasoning
+  class_name: UnslothInferenceReasoning
+  template_input: TextInput
+  attributes:
+    model_args:
+      model_name: unsloth/DeepSeek-R1-Distill-Qwen-1.5B
+      dtype: "bfloat16"
+      max_seq_length: 2048
+      load_in_4bit: true
+      device_map: "auto"
+      gpu_memory_utilization: 1
+    generate_args:
+      max_new_tokens: 512
+      temperature: 0.2
+      do_sample: false
+    chat_config:
+      mapping:
+        role: "role"
+        content: "content"
+        user: "user"
+        assistant: "assistant"
+      map_eos_token: true
+      system_message: You are a helpful assistant.
+      chat_template: deepseek-r1
+      reasoning_open_tag: "<think>"
+      reasoning_close_tag: "</think>"
+    streaming: true

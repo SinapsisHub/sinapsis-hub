@@ -1,0 +1,24 @@
+agent:
+  name: openai_api_agent
+
+templates:
+  - template_name: InputTemplate
+    class_name: InputTemplate
+    attributes: {}
+
+  - template_name: LLMConversationInput
+    class_name: LLMConversationInput
+    template_input: InputTemplate
+    attributes:
+      prompt: "Give three short tips for staying organized during a busy week."
+      system_prompt: "You are a helpful assistant."
+
+  - template_name: EndpointLLMCompletion
+    class_name: EndpointLLMCompletion
+    template_input: LLMConversationInput
+    attributes:
+      init_args:
+        base_url: "https://api.openai.com/v1"
+        llm_model_name: "gpt-4o-mini"
+      completion_args:
+        max_tokens: 2048

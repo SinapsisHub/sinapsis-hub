@@ -1,0 +1,29 @@
+agent:
+  name: my_test_agent
+  attributes:
+    description: "OpenAI audio translation"
+templates:
+
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: AudioReadertoBytes
+  class_name: AudioReaderToBytes
+  template_input: InputTemplate
+  attributes:
+    audio_file_path : /home/natalia/Documents/Corteza/projects/sinapsis_all/sinapsis-openai/openai/OpenAIChat-53193e89.wav ##replace value
+
+- template_name: OpenAIChat
+  class_name: OpenAIAudioTranslationWrapper
+  template_input: AudioReadertoBytes
+  attributes:
+    model : 'whisper-1'
+    openai_init: {}
+    create: {}
+#- template_name: AudioWriterSoundfile
+#  class_name: AudioWriterSoundfile
+#  template_input: OpenAIChat
+#  attributes:
+#    save_dir: "openai2"
+#    extension: "wav"

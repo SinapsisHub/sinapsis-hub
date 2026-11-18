@@ -1,0 +1,19 @@
+agent:
+  name: one_drive_loader
+  description: "One Drive Loader example"
+
+templates:
+
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: LangChainOneDriveLoader
+  class_name: LangChainOneDriveLoader
+  template_input: InputTemplate
+  attributes:
+    add_document_as_text_packet: false
+    folder_id: folder_id
+    drive_id: drive_id
+    auth_with_token: false
+    token_path: /path/to/token.txt

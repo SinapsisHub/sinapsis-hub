@@ -1,0 +1,75 @@
+agent:
+  name: unsloth_finetuning_agent
+  description: Agent to handle LoRA continued pretraining of LLMs using Unsloth
+
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: UnslothPretrainer
+  class_name: UnslothPretrainer
+  template_input: InputTemplate
+  attributes:
+    model_args:
+      model_name: unsloth/DeepSeek-R1-Distill-Qwen-1.5B
+      max_seq_length: 8000
+      dtype: "auto"
+      load_in_4bit: true
+      gpu_memory_utilization: 1
+      random_state: 3407
+    lora_args:
+      r: 32
+      target_modules:
+        - "q_proj"
+        - "k_proj"
+        - "v_proj"
+        - "o_proj"
+        - "gate_proj"
+        - "up_proj"
+        - "down_proj"
+        - "embed_tokens"
+        - "lm_head"
+      lora_alpha: 32
+      lora_dropout: 0
+      bias: "none"
+      use_gradient_checkpointing: unsloth
+      random_state: 3407
+      use_rslora: true
+    trainer_args:
+      dataset_text_field: "text"
+      dataset_num_proc: 2
+      max_length: 8000
+    training_args:
+      per_device_train_batch_size: 4
+      gradient_accumulation_steps: 8
+      warmup_ratio: 0.1
+      num_train_epochs: 2
+      learning_rate: 0.00005
+      embedding_learning_rate: 0.00001
+      fp16: false
+      bf16: true
+      logging_steps: 1
+      optim: adamw_8bit
+      weight_decay: 0.01
+      lr_scheduler_type: linear
+      seed: 3407
+      output_dir: outputs
+      save_strategy: "epoch"
+      report_to: none
+    train_dataset:
+      loader_args:
+        path: json
+        data_files: artifacts/dataset.jsonl
+        split: train
+      map_args:
+        batched: true
+        num_proc: 2
+      shuffle:
+        enabled: true
+        args:
+          seed: 3407
+      pre_tokenize:
+        enabled: false
+    resume_from_checkpoint: false
+    save_path: artifacts/DeepSeek-R1-Distill-Qwen-1.5B-pt

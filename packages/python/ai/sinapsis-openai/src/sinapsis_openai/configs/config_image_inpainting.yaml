@@ -1,0 +1,64 @@
+agent:
+  name: image_edition_agent
+  description: "OpenAI Image Edition with Mask"
+
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: FolderImageDatasetCV2
+  class_name: FolderImageDatasetCV2
+  template_input: InputTemplate
+  attributes:
+    data_dir: /data_dir
+    pattern: '**/*'
+    batch_size: 5
+    shuffle_data: false
+    samples_to_load: 1
+    load_on_init: false
+    label_path_index: -2
+    is_ground_truth: false
+
+- template_name: MaskNonROIs
+  class_name: MaskNonROIs
+  template_input: FolderImageDatasetCV2
+  attributes:
+    return_as_mask: true
+    rois_to_keep:
+      - roi:
+        - x: 100
+          y: 10
+        - x: 300
+          y: 10
+        - x: 300
+          y: 220
+        - x: 100
+          y: 220
+
+- template_name: TextInput
+  class_name: TextInput
+  template_input: MaskNonROIs
+  attributes:
+    text: "Add a random object in the provided mask"
+
+- template_name: OpenAIImageInpainting
+  class_name: OpenAIImageInpaintingWrapper
+  template_input: TextInput
+  attributes:
+    model: gpt-image-1
+    response_format: "b64_json"
+    openai_init: {}
+    edit:
+      n: 1
+
+- template_name: ImageSaver
+  class_name: ImageSaver
+  template_input: OpenAIImageInpainting
+  attributes:
+    save_dir: 'OAI_image_edition_results/'
+    extension: jpg
+    save_full_image: true
+    save_bbox_crops: false
+    save_mask_crops: false
+    min_bbox_dim: 5

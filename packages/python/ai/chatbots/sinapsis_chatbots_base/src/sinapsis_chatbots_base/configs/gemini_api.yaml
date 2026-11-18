@@ -1,0 +1,24 @@
+agent:
+  name: gemini_api_agent
+
+templates:
+  - template_name: InputTemplate
+    class_name: InputTemplate
+    attributes: {}
+
+  - template_name: LLMConversationInput
+    class_name: LLMConversationInput
+    template_input: InputTemplate
+    attributes:
+      prompt: "Give three short tips for staying organized during a busy week."
+      system_prompt: "You are a helpful assistant."
+
+  - template_name: EndpointLLMCompletion
+    class_name: EndpointLLMCompletion
+    template_input: LLMConversationInput
+    attributes:
+      init_args:
+        base_url: "https://generativelanguage.googleapis.com/v1beta/openai/"
+        llm_model_name: "gemini-3-flash-preview"
+      completion_args:
+        max_tokens: 2048

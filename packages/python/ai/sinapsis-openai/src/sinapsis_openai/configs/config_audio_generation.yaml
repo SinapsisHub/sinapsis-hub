@@ -1,0 +1,29 @@
+agent:
+  name: my_test_agent
+  description: "OpenAI audio generation"
+templates:
+
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: TextInput
+  class_name: TextInput
+  template_input: InputTemplate
+  attributes:
+    text : this is a test audio
+
+- template_name: OpenAIChat
+  class_name: OpenAIAudioCreationWrapper
+  template_input: TextInput
+  attributes:
+    model : tts-1
+    openai_init: {}
+    create:
+      voice : alloy
+- template_name: AudioWriterSoundfile
+  class_name: AudioWriterSoundfile
+  template_input: OpenAIChat
+  attributes:
+    save_dir: "openai"
+    extension: "wav"

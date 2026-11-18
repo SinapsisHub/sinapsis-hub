@@ -1,0 +1,36 @@
+agent:
+  name: bedrock_mantle_openai_agent
+
+# AWS Bedrock Mantle exposes an OpenAI-compatible endpoint. Auth uses a short-lived
+# bearer token (not a static API key), so generate one and export it as LLM_API_KEY:
+#
+#   export LLM_API_KEY=$(python -c "from aws_bedrock_token_generator import provide_token; print(provide_token(region='us-east-2'))")
+#
+# (requires AWS credentials in the environment / ~/.aws, and the
+#  aws-bedrock-token-generator package). The token is short-lived; regenerate it when it
+#  expires. `default_headers.OpenAI-Project` is the equivalent of the OpenAI SDK's
+#  `project="default"` argument.
+
+templates:
+  - template_name: InputTemplate
+    class_name: InputTemplate
+    attributes: {}
+
+  - template_name: LLMConversationInput
+    class_name: LLMConversationInput
+    template_input: InputTemplate
+    attributes:
+      prompt: "Give three short tips for staying organized during a busy week."
+      system_prompt: "You are a helpful assistant."
+
+  - template_name: EndpointLLMCompletion
+    class_name: EndpointLLMCompletion
+    template_input: LLMConversationInput
+    attributes:
+      init_args:
+        base_url: "https://bedrock-mantle.us-east-2.api.aws/v1"
+        llm_model_name: "openai.gpt-oss-120b"
+        default_headers:
+          OpenAI-Project: "default"
+      completion_args:
+        max_tokens: 512

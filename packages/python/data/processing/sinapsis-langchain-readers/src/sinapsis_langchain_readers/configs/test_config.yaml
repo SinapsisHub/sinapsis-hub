@@ -1,0 +1,27 @@
+agent:
+  name: my_test_agent
+templates:
+- template_name: InputTemplate
+  class_name: InputTemplate
+  attributes: {}
+
+- template_name: DocugamiLoaderWrapper
+  class_name: DocugamiLoaderWrapper
+  template_input: InputTemplate
+  attributes:
+    add_document_as_text_packet: false
+    docugamiloader_init:
+      api: https://api.docugami.com/v1preview1
+      access_token: some-api
+      max_text_length: 4096
+      min_text_length: 32
+      max_metadata_length: 512
+      include_xml_tags: false
+      parent_hierarchy_levels: 0
+      parent_id_key: doc_id
+      sub_chunk_tables: false
+      whitespace_normalize_text: true
+#      docset_id: null
+#      document_ids: null
+      file_paths: ['/home/natalia/Downloads/facturaq.xml']
+      include_project_metadata_in_doc_metadata: true

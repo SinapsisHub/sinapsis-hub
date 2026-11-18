@@ -1,0 +1,151 @@
+[project]
+name = "sinapsis-unsloth"
+description = "Package for fine-tuning, running and exporting Large Language Models with Unsloth."
+requires-python = ">=3.13"
+version = "1.0.0"
+authors = [
+    { name = "Ariel Ruiz-Garcia", email = "ariel@sinapsis.tech" },
+]
+maintainers = [
+    { name = "sinapsis", email = "dev@sinapsis.tech" },
+]
+license = "MIT OR Apache-2.0"
+license-files = ["LICENSE-MIT", "LICENSE-APACHE"]
+readme = "README.md"
+dependencies = [
+    "sinapsis>=1,<2",
+    "unsloth>=2025.6.2",
+    "torch>=2.6.0",
+    "setuptools>=80.9.0",
+]
+
+
+[project.optional-dependencies]
+huggingface = [
+    "unsloth[huggingface]>=2025.6.2",
+]
+
+flashattention = [
+    "ninja>=1.13.0",
+    "packaging>=25.0",
+    "flash-attn>=2.8.3",
+    "torch==2.9.0"
+]
+
+sinapsis-data-readers = [
+    "sinapsis-data-readers>=0.1.10",
+]
+
+all = [
+    "sinapsis-unsloth[huggingface]",
+    "sinapsis-unsloth[flashattention]",
+    "sinapsis-unsloth[sinapsis-data-readers]",
+]
+
+
+[project.urls]
+Homepage = "https://sinapsis.tech"
+Documentation = "https://docs.sinapsis.tech/docs"
+Tutorials = "https://docs.sinapsis.tech/tutorials"
+Repository = "https://github.com/SinapsisHub/sinapsis-hub.git"
+
+
+[[tool.uv.index]]
+name = "sinapsis-protected"
+url = "https://private.pypi.sinapsis.tech/"
+explicit = true
+
+
+[[tool.uv.index]]
+name = "sinapsis-private"
+url = "https://pypi.sinapsis.tech/"
+explicit = true
+
+
+[tool.uv.sources]
+flash-attn = [
+  { url = "https://github.com/mjun0812/flash-attention-prebuild-wheels/releases/download/v0.5.4/flash_attn-2.8.3+cu124torch2.9-cp310-cp310-linux_x86_64.whl", marker = "python_version == '3.10'" },
+  { url = "https://github.com/mjun0812/flash-attention-prebuild-wheels/releases/download/v0.5.4/flash_attn-2.8.3+cu124torch2.9-cp311-cp311-linux_x86_64.whl", marker = "python_version == '3.11'" },
+  { url = "https://github.com/mjun0812/flash-attention-prebuild-wheels/releases/download/v0.5.4/flash_attn-2.8.3+cu124torch2.9-cp312-cp312-linux_x86_64.whl", marker = "python_version == '3.12'" }
+]
+
+
+[tool.ruff]
+line-length = 120
+show-fixes = true
+target-version = "py310"
+fix = true
+
+
+[tool.ruff.lint]
+select = [
+    "ARG",
+    "ANN",
+    "BLE",
+    "C4",
+    "E",
+    "F",
+    "FIX",
+    "FLY",
+    "I",
+    "PERF",
+    "PIE",
+    "RUF",
+    "RSE",
+    "SIM",
+    "SLOT",
+    "T10",
+    "T20",
+    "TD",
+    "TID",
+]
+ignore = [
+    "ANN401",
+    "E501",   # trailing-comma
+]
+preview = true
+
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+
+[tool.ruff.lint.isort]
+section-order = [
+    "future",
+    "unsloth",
+    "sinapsis-unsloth",
+    "standard-library",
+    "third-party",
+    "first-party",
+    "local-folder"
+]
+
+
+[tool.ruff.lint.isort.sections]
+"unsloth" = ["unsloth"]
+"sinapsis-unsloth" = ["sinapsis_unsloth"]
+
+
+[tool.ruff.format]
+skip-magic-trailing-comma = true
+
+
+[dependency-groups]
+dev = [
+    "ruff>=0.8.3",
+    "pre-commit>=4.0.1",
+]
+
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sinapsis_unsloth"]
+
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+
+[tool.hatch.version]
+source = "vcs"

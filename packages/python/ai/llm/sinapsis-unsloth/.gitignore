@@ -1,0 +1,21 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+artifacts
+outputs
+unsloth_compiled_cache
+_unsloth_temporary_saved_buffers
+_unsloth_sentencepiece_temp
+repos
+llama.cpp
+wandb
+src/sinapsis_unsloth/thirdparty/grpo
+grpo_trainer_lora_model
+tests/

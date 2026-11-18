@@ -1,0 +1,84 @@
+[project]
+name = "sinapsis_langchain_splitters"
+version = "1.0.0"
+description = "Package that provides support for Langchain splitters module."
+readme = "README.md"
+requires-python = ">=3.13"
+authors = [
+    { name = "Ariel Ruiz-Garcia", email = "ariel@sinapsis.tech" },
+]
+license-files = ["LICENSE-MIT", "LICENSE-APACHE"]
+dependencies = [
+    "langchain-community>=0.3.20",
+    "langchain-text-splitters>=0.3.7",
+    "sinapsis>=1,<2",
+]
+maintainers = [
+    { name = "sinapsis", email = "dev@sinapsis.tech" },
+]
+license = "MIT OR Apache-2.0"
+
+
+[tool.uv.sources]
+sinapsis_langchain_splitters = { workspace = true }
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sinapsis_langchain_splitters"]
+[dependency-groups]
+dev = [
+    "ruff>=0.8.3",
+    "pre-commit>=4.0.1",
+]
+
+[project.optional-dependencies]
+spacy = [
+    "spacy>=3.8.11",
+]
+konlpy = [
+    "konlpy>=0.6.0",
+]
+all = [
+    "sinapsis_langchain_splitters[konlpy,spacy]>=1.0.0",
+]
+
+
+
+[tool.ruff]
+lint.select = [
+    "ARG",
+    "ANN",
+    "BLE",
+    "C4",
+    "E",
+    "F",
+    "FIX",
+    "FLY",
+    "I",
+    "PERF",
+    "PIE",
+    "RUF",
+    "RSE",
+    "SIM",
+    "SLOT",
+    "T10",
+    "T20",
+    "TD",
+    "TID",
+]
+
+
+lint.ignore = ['ANN401']
+line-length = 120
+show-fixes = true
+target-version = "py313"
+
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project.urls]
+Homepage = "https://sinapsis.tech"
+Documentation = "https://docs.sinapsis.tech/docs"
+Tutorials = "https://docs.sinapsis.tech/tutorials"
+Repository = "https://github.com/SinapsisHub/sinapsis-hub.git"
