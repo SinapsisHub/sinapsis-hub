@@ -1,4 +1,3 @@
-sinapsis-deserialization
 <h1 align="center">
 <br>
 <a href="https://sinapsis.tech/">
