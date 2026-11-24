@@ -25,8 +25,8 @@ Compose and build AI systems from reusable components. Combine models, framework
 
 <p align="center">
   <a href="https://docs.sinapsis.tech/">📚 Documentation</a> ·
-  <a href="#-quick-start">🚀 Quick start</a> ·
-  <a href="#-why-sinapsis">⚡ Why Sinapsis?</a> ·
+  <a href="#-quickstart">⚡ Quickstart</a> ·
+  <a href="#-why-sinapsis">🚀 Why Sinapsis?</a> ·
   <a href="https://platform.sinapsis.tech/">☁️ Sinapsis Cloud</a>
 </p>
 
@@ -42,7 +42,7 @@ Join us on our <a href="https://discord.gg/uuBqQqu2vS"> Discord Server </a> to c
 
 ---
 
-## 🚀 Quickstart
+## ⚡ Quickstart
 
 Below are two quickstart examples of agents in Sinapsis.
 
