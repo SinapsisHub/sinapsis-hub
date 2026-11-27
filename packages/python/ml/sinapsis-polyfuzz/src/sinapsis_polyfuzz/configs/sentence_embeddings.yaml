@@ -1,0 +1,38 @@
+agent:
+  name: my_test_agent
+  description: "Agent utilizing Sentence Transformers for semantic similarity."
+
+templates:
+  - template_name: InputTemplate
+    class_name: InputTemplate
+    attributes: {}
+
+  - template_name: CSVDatasetReader
+    class_name: CSVDatasetReader
+    template_input: InputTemplate
+    attributes:
+      root_dir: "artifacts"
+      path_to_csv: "example.csv"
+      store_as_time_series: false
+
+  - template_name: SentenceEmbeddingsWrapper
+    class_name: SentenceEmbeddingsWrapper
+    template_input: CSVDatasetReader
+    attributes:
+      target_column: "company_name"
+      to_list:
+        - "Apple Inc"
+        - "Microsoft Corporation"
+        - "Google LLC"
+        - "Amazon.com"
+        - "Netflix Inc"
+        - "Tesla Motors"
+        - "Meta Platforms"
+        - "NVIDIA Corp"
+        - "Intel Corp"
+      overwrite: true
+      sentenceembeddings_init:
+        embedding_model: all-MiniLM-L6-v2
+        min_similarity: 0.75
+        top_n: 1
+        cosine_method: sparse

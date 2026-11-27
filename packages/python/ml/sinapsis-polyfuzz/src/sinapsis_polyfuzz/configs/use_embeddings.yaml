@@ -1,0 +1,38 @@
+agent:
+  name: my_test_agent
+  description: "Agent utilizing Universal Sentence Encoder for deep semantic matching."
+
+templates:
+  - template_name: InputTemplate
+    class_name: InputTemplate
+    attributes: {}
+
+  - template_name: CSVDatasetReader
+    class_name: CSVDatasetReader
+    template_input: InputTemplate
+    attributes:
+      root_dir: "artifacts"
+      path_to_csv: "example.csv"
+      store_as_time_series: false
+
+  - template_name: USEEmbeddingsWrapper
+    class_name: USEEmbeddingsWrapper
+    template_input: CSVDatasetReader
+    attributes:
+      target_column: "company_name"
+      to_list:
+        - "Apple Inc"
+        - "Microsoft Corporation"
+        - "Google LLC"
+        - "Amazon.com"
+        - "Netflix Inc"
+        - "Tesla Motors"
+        - "Meta Platforms"
+        - "NVIDIA Corp"
+        - "Intel Corp"
+      overwrite: true
+      useembeddings_init:
+        embedding_model: https://tfhub.dev/google/universal-sentence-encoder/4
+        min_similarity: 0.75
+        top_n: 1
+        cosine_method: sparse

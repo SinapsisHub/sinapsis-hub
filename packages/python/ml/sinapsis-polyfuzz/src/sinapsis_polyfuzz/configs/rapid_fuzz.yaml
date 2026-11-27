@@ -1,0 +1,36 @@
+agent:
+  name: my_test_agent
+  description: "Agent utilizing RapidFuzz for high-performance string matching."
+
+templates:
+  - template_name: InputTemplate
+    class_name: InputTemplate
+    attributes: {}
+
+  - template_name: CSVDatasetReader
+    class_name: CSVDatasetReader
+    template_input: InputTemplate
+    attributes:
+      root_dir: "artifacts"
+      path_to_csv: "example.csv"
+      store_as_time_series: false
+
+  - template_name: RapidFuzzWrapper
+    class_name: RapidFuzzWrapper
+    template_input: CSVDatasetReader
+    attributes:
+      target_column: "company_name"
+      to_list:
+        - "Apple Inc"
+        - "Microsoft Corporation"
+        - "Google LLC"
+        - "Amazon.com"
+        - "Netflix Inc"
+        - "Tesla Motors"
+        - "Meta Platforms"
+        - "NVIDIA Corp"
+        - "Intel Corp"
+      overwrite: true
+      rapidfuzz_init:
+        n_jobs: 1
+        score_cutoff: 0
